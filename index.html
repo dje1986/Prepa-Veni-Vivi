@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Veni Vici Prep</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --bg-creme: #FDFBF7;
+            --txt-marron-fonce: #3E2723;
+            --marron-clair: #8D6E63;
+            --vert-foret: #2E7D32;
+            --vert-sauge: #E8F5E9;
+        }
+        body { background-color: var(--bg-creme); color: var(--txt-marron-fonce); font-family: system-ui, sans-serif; }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen pb-20 selection:bg-emerald-100">
+
+    <script>
+        // TRÈS IMPORTANT : Remplacez cette chaîne par votre URL de déploiement Google Web App finale (/exec)
+        const API_URL = "https://script.google.com/macros/s/AKfycbyoy24ZHaxXDhNADuZtRsZvxUcwMIwyVWOdcw8ve5i3rIcGRLDHNWQ6-XGSnb0FBocr/exec"; 
+        
+        const PLAN_INITIAL = [
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Mardi","Type":"Côtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 8x30\" en côte (descente RCV) + 15' EF"},
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Courir au feeling en aisance respiratoire pure (seuil 1)"},
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":100,"D_Plus_Prevu_M":400,"Description":"Rando-course en terrain varié, focus sur la régularité"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Mardi","Type":"Fartlek Plat","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(1' rapide / 1' lent) + 10' EF"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Course lente sous la chaleur (adaptation thermique)"},
+            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Mercredi","Type":"Seuil Plat","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x6' allure marathon (5'30/km) Récup 2' + 10' EF"},
+            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Samedi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Sortie continue en aisance totale"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Mardi","Type":"Fartlek Court","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"15' EF + 12x(30\" vite / 30\" lent) + 10' EF"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing de récupération active"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Mardi","Type":"Côtes courtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"15' EF + 10x40\" en côte dynamique + 15' EF"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing plat de récupération"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Samedi","Type":"Sortie Longue Trail","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Rando-course avec montées marchées actives et descentes souples"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Mardi","Type":"Seuil en Côte","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 4x4' montée rythmée (allure trail court) Récup descente + 10' EF"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Footing sur plat avec 3 accélérations de 15\" en fin de séance"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":140,"D_Plus_Prevu_M":600,"Description":"Bloc spécifique : inclure 2x15' à allure cible VV (Veni Vici)"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Mardi","Type":"Côtes Longues","Duree_Prevue_Min":60,"D_Plus_Prevu_M":350,"Description":"15' EF + 3x8' montée au train (Seuil anaérobie) Récup descente"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing de relâchement complet"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Samedi","Type":"Sortie Longue Majeure","Duree_Prevue_Min":160,"D_Plus_Prevu_M":700,"Description":"Parcours vallonné, travail des transitions marche/course"},
+            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Vendredi","Type":"Footing Reprise","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"Trot très souple sur le plat, écoute des sensations"},
+            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Dimanche","Type":"Footing Continu","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Endurance fondamentale pure, terrain souple (parc ou sous-bois)"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Mardi","Type":"Côtes Douces","Duree_Prevue_Min":45,"D_Plus_Prevu_M":120,"Description":"15' EF + 6x30\" en côte sans forcer + 15' EF"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing avec variations de rythme naturelles sur le plat"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Samedi","Type":"Sortie Longue Progressive","Duree_Prevue_Min":90,"D_Plus_Prevu_M":350,"Description":"Sortie trail douce, focus technique en descente"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Mardi","Type":"Seuil Spécifique","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x2000m sur plat ou faux-plat à allure marathon (5'30) R=2'"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Vendredi","Type":"Côtes Répétées","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 8x1' en bosse à 85% FCM, récup descente + 15' EF"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Dimanche","Type":"Sortie Longue Volume","Duree_Prevue_Min":180,"D_Plus_Prevu_M":800,"Description":"Rando-course de 3h. Test obligatoire du matériel et de la nutrition"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Mardi","Type":"Rappels de VMA","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(30\" à 100% VMA / 30\" EF) + 15' EF"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Vendredi","Type":"Pré-charge Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"Footing vallonné avec 3x3' de descente technique rythmée"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Samedi","Type":"Week-end Choc - J1","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Sortie trail active à allure cible"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Dimanche","Type":"Week-end Choc - J2","Duree_Prevue_Min":180,"D_Plus_Prevu_M":700,"Description":"Rando-course lente sur jambes fatiguées. Focus mental."},
+            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Mercredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing ultra-souple de récupération"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Samedi","Type":"Sortie Longue Allégée","Duree_Prevue_Min":90,"D_Plus_Prevu_M":300,"Description":"Sortie plaisir en sous-bois sans forcer dans les bosses"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Mardi","Type":"Seuil Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 2x10' à allure VV (Target 6h15) en terrain vallonné R=3'"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing d'entretien sur le plat"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Dimanche","Type":"Sortie Longue Courte","Duree_Prevue_Min":75,"D_Plus_Prevu_M":250,"Description":"Dernière sortie de plus d'une heure. Sensation de fraîcheur recherchée."},
+            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Mardi","Type":"Rappels dynamiques","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 6x200m plat dynamiques sans forcer + 15' EF"},
+            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Vendredi","Type":"Footing Éveil","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"Footing très tranquille avec quelques lignes droites souples"},
+            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Mercredi","Type":"Activation","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"20' EF + 3 accélérations progressives de 100m + 5' EF"},
+            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Samedi","Type":"JOUR DE LA COURSE","Duree_Prevue_Min":375,"D_Plus_Prevu_M":1470,"Description":"LA VENI VICI (52km - 1470m D+). Gestion, plaisir et mental !"}
+        ];
+
+        let appData = { theorique: PLAN_INITIAL, pratique: [] };
+        let instanceChartDist = null;
+        let instanceChartDplus = null;
+
+        async function fetchInitialData() {
+            try {
+                const res = await fetch(API_URL);
+                const json = await res.json();
+                if(json.theorique && json.theorique.length > 0) appData.theorique = json.theorique;
+                appData.pratique = json.pratique || [];
+                localStorage.setItem('trail_data_cache', JSON.stringify(appData));
+            } catch (e) {
+                const cache = localStorage.getItem('trail_data_cache');
+                if (cache) appData = JSON.parse(cache);
+            }
+            renderProgression();
+            renderConseils();
+        }
+    </script>
+
+    <header class="p-4 border-b border-stone-100 bg-white sticky top-0 z-10 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-xl">👟</span>
+            <h1 class="text-sm font-black tracking-widest uppercase text-stone-800">Veni Vici 2026</h1>
+        </div>
+        <button onclick="pullToRefresh()" class="text-xs px-3 py-1.5 rounded-full font-semibold transition-transform active:scale-95" style="background-color: var(--vert-sauge); color: var(--vert-foret)">🔄 Sync</button>
+    </header>
+
+    <div id="toast" class="hidden fixed top-16 left-4 right-4 bg-stone-800 text-white text-sm p-3 rounded-xl shadow-lg text-center z-50"></div>
+
+    <main id="page-progression" class="p-4 space-y-6 flex-1 max-w-xl mx-auto w-full">
+        <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-xs">
+            <span class="text-xs font-bold uppercase tracking-wider text-stone-400" id="current-phase-title">Reprise & Volume Initial</span>
+            <h2 class="text-xl font-black mt-0.5" id="current-week-title" style="color: var(--txt-marron-fonce)">Semaine 1</h2>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Objectifs de la semaine</h3>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Distance</span><span id="txt-dist" class="text-stone-500">0 / 0 km</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-dist" class="h-full transition-all duration-500" style="background-color: var(--marron-clair); width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Dénivelé (D+)</span><span id="txt-dplus" class="text-stone-500">0 / 0 m</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-dplus" class="h-full transition-all duration-500" style="background-color: var(--txt-marron-fonce); width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Séances Validées</span><span id="txt-seances" class="text-stone-500">0 / 0</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-seances" class="h-full transition-all duration-500" style="background-color: var(--vert-foret); width: 0%"></div></div>
+            </div>
+        </div>
+
+        <div class="bg-stone-100/70 p-5 rounded-2xl border border-stone-200/40 space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Progression globale (Objectif Course)</h3>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Distance totale cumulée</span><span id="txt-global-dist" class="text-stone-500">0 / 0 km</span></div>
+                <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden"><div id="bar-global-dist" class="h-full transition-all duration-500" style="background-color: var(--marron-clair); width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Dénivelé total cumulé</span><span id="txt-global-dplus" class="text-stone-500">0 / 0 m</span></div>
+                <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden"><div id="bar-global-dplus" class="h-full transition-all duration-500" style="background-color: var(--txt-marron-fonce); width: 0%"></div></div>
+            </div>
+        </div>
+
+        <div class="space-y-2">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Les 3 prochaines séances du plan</h3>
+            <div id="next-sessions-container" class="space-y-2">
+                </div>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Courbes d'évolution temporelle (Avant Course)</h3>
+            <div class="bg-white p-4 rounded-2xl border border-stone-100 shadow-xs">
+                <span class="text-xs font-bold text-stone-600 block mb-2">Distance Cumulée (km)</span>
+                <div class="h-44 relative w-full"><canvas id="chart-distance"></canvas></div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-stone-100 shadow-xs">
+                <span class="text-xs font-bold text-stone-600 block mb-2">Dénivelé Positif Cumulé (m)</span>
+                <div class="h-44 relative w-full"><canvas id="chart-dplus"></canvas></div>
+            </div>
+        </div>
+
+        <div class="space-y-3">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Séances réalisées par catégorie</h3>
+            <div id="type-indicators" class="grid grid-cols-2 gap-2 text-white text-center text-xs font-bold">
+                </div>
+        </div>
+    </main>
+
+    <main id="page-ajouter" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
+        <h2 class="text-xl font-bold">Enregistrer un entraînement</h2>
+        <form id="form-seance" onsubmit="soumettreSeance(event)" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-stone-600">Date de la sortie</label>
+                <input type="date" id="form-date" required class="w-full p-3 rounded-xl border border-stone-200 bg-white">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2 text-stone-600">Type de séance</label>
+                <div class="flex flex-wrap gap-2" id="tag-container">
+                    <button type="button" onclick="selectTag(this, 'Endurance')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Endurance</button>
+                    <button type="button" onclick="selectTag(this, 'VMA / Fartlek')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">VMA / Fartlek</button>
+                    <button type="button" onclick="selectTag(this, 'Côtes / Seuil')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Côtes / Seuil</button>
+                    <button type="button" onclick="selectTag(this, 'Sortie Longue')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Sortie Longue</button>
+                    <button type="button" onclick="selectTag(this, 'Renforcement')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Renforcement</button>
+                </div>
+                <input type="hidden" id="form-type" required>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">Distance (km)</label>
+                    <input type="number" step="0.1" id="form-dist" class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0.0">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">D+ (m)</label>
+                    <input type="number" id="form-dplus" class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">Durée (min)</label>
+                    <input type="number" id="form-duree" required class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1 text-stone-600">Ressenti (RPE : <span id="rpe-val">5</span>/10)</label>
+                <input type="range" min="1" max="10" id="form-rpe" value="5" oninput="document.getElementById('rpe-val').innerText=this.value" class="w-full accent-emerald-700">
+            </div>
+            <button type="submit" class="w-full p-4 rounded-xl font-bold text-white shadow-md transition-transform active:scale-98" style="background-color: var(--vert-foret)">Valider la séance</button>
+        </form>
+    </main>
+
+    <main id="page-conseil" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
+        <h2 class="text-xl font-bold">L'Analyse du Coach</h2>
+        <div id="conseil-container" class="space-y-4"></div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 h-16 flex justify-center items-center gap-4 z-10">
+        <button onclick="switchTab('progression')" class="w-24 flex flex-col items-center text-center text-xs font-medium space-y-0.5 text-emerald-800 transition-transform active:scale-95">
+            <span class="text-lg">⚡</span>
+            <span>Progression</span>
+        </button>
+        <button onclick="switchTab('ajouter')" class="w-24 flex flex-col items-center text-center text-xs font-medium space-y-0.5 text-stone-400 transition-transform active:scale-95">
+            <span class="text-lg">☑️</span>
+            <span>Ajouter</span>
+        </button>
+        <button onclick="switchTab('conseil')" class="w-24 flex flex-col items-center text-center text-xs font-medium space-y-0.5 text-stone-400 transition-transform active:scale-95">
+            <span class="text-lg">💡</span>
+            <span>Conseil</span>
+        </button>
+    </nav>
+
+    <script>
+        document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+
+        const DESIGN_COULEURS = {
+            'Endurance': { bg: 'bg-blue-600', border: 'border-blue-600', hex: '#2563eb' },
+            'VMA / Fartlek': { bg: 'bg-purple-600', border: 'border-purple-600', hex: '#9333ea' },
+            'Côtes / Seuil': { bg: 'bg-orange-600', border: 'border-orange-600', hex: '#ea580c' },
+            'Sortie Longue': { bg: 'bg-emerald-600', border: 'border-emerald-600', hex: '#059669' },
+            'Renforcement': { bg: 'bg-rose-600', border: 'border-rose-600', hex: '#e11d48' }
+        };
+
+        function mapPlanTypeToFormCategory(t) {
+            if (!t) return 'Endurance';
+            if (t.includes('Endurance') || t.includes('Footing') || t.includes('Activation')) return 'Endurance';
+            if (t.includes('VMA') || t.includes('Fartlek') || t.includes('Rappels')) return 'VMA / Fartlek';
+            if (t.includes('Côtes') || t.includes('Seuil')) return 'Côtes / Seuil';
+            if (t.includes('Sortie Longue') || t.includes('Week-end Choc') || t.includes('COURSE')) return 'Sortie Longue';
+            if (t.includes('Renforcement')) return 'Renforcement';
+            return 'Endurance';
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('main').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${tabName}`).classList.remove('hidden');
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(btn => btn.classList.replace('text-emerald-800', 'text-stone-400'));
+            const activeIdx = tabName === 'progression' ? 0 : tabName === 'ajouter' ? 1 : 2;
+            navButtons[activeIdx].classList.replace('text-stone-400', 'text-emerald-800');
+        }
+
+        function selectTag(btn, type) {
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                b.className = "tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all";
+            });
+            const cfg = DESIGN_COULEURS[type];
+            btn.className = `tag-btn px-3 py-2 rounded-lg border text-sm font-bold text-white shadow-xs ${cfg.bg} ${cfg.border}`;
+            document.getElementById('form-type').value = type;
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 4000);
+        }
+
+        async function pullToRefresh() {
+            showToast("Mise à jour des données...");
+            await fetchInitialData();
+            showToast("Données synchronisées !");
+        }
+
+        function getNumSemaineDepuisDate(dateStr) {
+            const d = new Date(dateStr);
+            const dateDebutPlan = new Date("2026-07-18");
+            const diff = d - dateDebutPlan;
+            const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
+            if (jours < 0) return 1;
+            const sem = Math.floor(jours / 7) + 1;
+            return sem <= 16 ? sem : 16;
+        }
+
+        function getNumSemaineActuelle() {
+            return getNumSemaineDepuisDate(new Date());
+        }
+
+        function renderProgression() {
+            const sNum = getNumSemaineActuelle();
+            const labelSemaine = "Semaine " + sNum;
+            
+            // 1. OBJECTIFS DE LA SEMAINE EN COURS
+            const sTheorique = appData.theorique.filter(s => s.Semaine === labelSemaine);
+            let cibleDuree = 0, cibleDplus = 0, cibleSeances = sTheorique.length;
+            
+            if(sTheorique.length > 0) {
+                document.getElementById('current-phase-title').innerText = sTheorique[0].Phase;
+                document.getElementById('current-week-title').innerText = labelSemaine + " : " + sTheorique[0].Dates;
+                sTheorique.forEach(s => {
+                    cibleDuree += parseFloat(s.Duree_Prevue_Min) || 0;
+                    cibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
+                });
+            }
+
+            const sPratique = appData.pratique.filter(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                return sem === labelSemaine;
+            });
+
+            let realDist = 0, realDplus = 0, realSeances = sPratique.length;
+            sPratique.forEach(s => {
+                realDist += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                realDplus += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
+            });
+
+            let cibleDist = (cibleDuree / 60) * 10; 
+            if (sNum === 16) cibleDist = 52;
+
+            document.getElementById('txt-dist').innerText = `${realDist.toFixed(1)} / ${cibleDist.toFixed(0)} km`;
+            document.getElementById('txt-dplus').innerText = `${realDplus} / ${cibleDplus} m`;
+            document.getElementById('txt-seances').innerText = `${realSeances} / ${cibleSeances}`;
+
+            document.getElementById('bar-dist').style.width = Math.min((realDist / (cibleDist || 1)) * 100, 100) + "%";
+            document.getElementById('bar-dplus').style.width = Math.min((realDplus / (cibleDplus || 1)) * 100, 100) + "%";
+            document.getElementById('bar-seances').style.width = Math.min((realSeances / (cibleSeances || 1)) * 100, 100) + "%";
+
+            // 2. CALCULS DES COURBES ET RECHERCHE DES SÉANCES FUTURES
+            let arrLabels = [];
+            let arrTheoDistCumul = [];
+            let arrTheoDplusCumul = [];
+            let arrRealDistCumul = [];
+            let arrRealDplusCumul = [];
+
+            let runningTheoDist = 0;
+            let runningTheoDplus = 0;
+            let runningRealDist = 0;
+            let runningRealDplus = 0;
+
+            // CORRECTIF GRAPHIQUE FUTUR : On cherche jusqu'à quelle semaine maximum l'utilisateur a saisi des données
+            let maxWeekLogged = sNum;
+            appData.pratique.forEach(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                if (sem) {
+                    const num = parseInt(sem.replace("Semaine ", ""));
+                    if (!isNaN(num) && num > maxWeekLogged) maxWeekLogged = num;
+                }
+            });
+
+            // Boucle restreinte jusqu'à 15 (exclut toujours la dernière semaine de la course)
+            for (let w = 1; w <= 15; w++) {
+                arrLabels.push("S" + w);
+                const loopSemaineLabel = "Semaine " + w;
+                
+                const elementsTheo = appData.theorique.filter(s => s.Semaine === loopSemaineLabel);
+                let theoDurSem = 0, theoDplusSem = 0;
+                elementsTheo.forEach(s => {
+                    theoDurSem += parseFloat(s.Duree_Prevue_Min) || 0;
+                    theoDplusSem += parseInt(s.D_Plus_Prevu_M) || 0;
+                });
+                let theoDistSem = (theoDurSem / 60) * 10;
+
+                runningTheoDist += theoDistSem;
+                runningTheoDplus += theoDplusSem;
+                arrTheoDistCumul.push(runningTheoDist);
+                arrTheoDplusCumul.push(runningTheoDplus);
+
+                // Utilisation de maxWeekLogged pour autoriser le tracé en avance
+                if (w <= maxWeekLogged) {
+                    const elementsPrat = appData.pratique.filter(s => {
+                        const sem = s.Semaine_Associee || s.semaine_associee;
+                        return sem === loopSemaineLabel;
+                    });
+                    let pratDistSem = 0, pratDplusSem = 0;
+                    elementsPrat.forEach(s => {
+                        pratDistSem += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                        pratDplusSem += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
+                    });
+                    runningRealDist += pratDistSem;
+                    runningRealDplus += pratDplusSem;
+                    arrRealDistCumul.push(runningRealDist);
+                    arrRealDplusCumul.push(runningRealDplus);
+                } else {
+                    arrRealDistCumul.push(null);
+                    arrRealDplusCumul.push(null);
+                }
+            }
+
+            // Calcul global
+            let totalPlanCibleDist = 0, totalPlanCibleDplus = 0;
+            appData.theorique.forEach(s => {
+                let d = parseFloat(s.Duree_Prevue_Min) || 0;
+                totalPlanCibleDist += (s.Semaine === "Semaine 16") ? 0 : (d / 60) * 10; 
+                totalPlanCibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
+            });
+            totalPlanCibleDist += 52; 
+
+            let globalRealDist = 0, globalRealDplus = 0;
+            appData.pratique.forEach(s => {
+                globalRealDist += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                globalRealDplus += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
+            });
+
+            document.getElementById('txt-global-dist').innerText = `${globalRealDist.toFixed(1)} / ${totalPlanCibleDist.toFixed(0)} km`;
+            document.getElementById('txt-global-dplus').innerText = `${globalRealDplus} / ${totalPlanCibleDplus} m`;
+            document.getElementById('bar-global-dist').style.width = Math.min((globalRealDist / (totalPlanCibleDist || 1)) * 100, 100) + "%";
+            document.getElementById('bar-global-dplus').style.width = Math.min((globalRealDplus / (totalPlanCibleDplus || 1)) * 100, 100) + "%";
+
+            // Rendu des blocs annexes
+            renderThreeNextSessions(sNum, realSeances);
+            renderEvolutionCharts(arrLabels, arrTheoDistCumul, arrRealDistCumul, arrTheoDplusCumul, arrRealDplusCumul);
+            renderVolumeCategories();
+        }
+
+        function renderThreeNextSessions(currentWeekNum, completedThisWeekCount) {
+            const container = document.getElementById('next-sessions-container');
+            let globalStartIndex = appData.theorique.findIndex(s => s.Semaine === `Semaine ${currentWeekNum}`);
+            if (globalStartIndex === -1) globalStartIndex = 0;
+
+            let effectiveStartIndex = globalStartIndex + completedThisWeekCount;
+            const upcomingSessions = appData.theorique.slice(effectiveStartIndex, effectiveStartIndex + 3);
+
+            if(upcomingSessions.length === 0) {
+                container.innerHTML = `<p class="text-stone-400 text-xs italic bg-white p-3 rounded-xl border border-stone-100">Plus aucune séance programmée. En route pour la course !</p>`;
+                return;
+            }
+
+            let html = "";
+            upcomingSessions.forEach(seance => {
+                html += `
+                    <div class="bg-white p-3 rounded-xl border border-stone-100 shadow-2xs flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wide">${seance.Semaine} — ${seance.Jour}</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded-sm font-bold bg-stone-100 text-stone-700">${seance.Duree_Prevue_Min} min</span>
+                        </div>
+                        <span class="font-bold text-sm mt-1 text-stone-800">${seance.Type}</span>
+                        <p class="text-xs text-stone-500 mt-0.5">${seance.Description}</p>
+                        ${seance.D_Plus_Prevu_M > 0 ? `<span class="text-[10px] font-bold text-emerald-700 mt-1">⛰️ +${seance.D_Plus_Prevu_M}m D+</span>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderEvolutionCharts(labels, theoDist, realDist, theoDplus, realDplus) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                    y: { beginAtZero: true, ticks: { font: { size: 10 }, precision: 0 } }
+                },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) { return context.dataset.label + ': ' + Math.round(context.raw); }
+                        }
+                    }
+                }
+            };
+
+            if (instanceChartDist) instanceChartDist.destroy();
+            const ctxDist = document.getElementById('chart-distance').getContext('2d');
+            instanceChartDist = new Chart(ctxDist, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Théorique', data: theoDist, borderColor: '#cbd5e1', backgroundColor: 'transparent', tension: 0.1, borderWidth: 1.5, pointRadius: 0 },
+                        { label: 'Réalisé', data: realDist, borderColor: '#8D6E63', backgroundColor: 'transparent', tension: 0.1, borderWidth: 3, pointRadius: 2.5 }
+                    ]
+                },
+                options: chartOptions
+            });
+
+            if (instanceChartDplus) instanceChartDplus.destroy();
+            const ctxDplus = document.getElementById('chart-dplus').getContext('2d');
+            instanceChartDplus = new Chart(ctxDplus, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Théorique', data: theoDplus, borderColor: '#cbd5e1', backgroundColor: 'transparent', tension: 0.1, borderWidth: 1.5, pointRadius: 0 },
+                        { label: 'Réalisé', data: realDplus, borderColor: '#3E2723', backgroundColor: 'transparent', tension: 0.1, borderWidth: 3, pointRadius: 2.5 }
+                    ]
+                },
+                options: chartOptions
+            });
+        }
+
+        function renderVolumeCategories() {
+            const compteursPratique = { 'Endurance': 0, 'VMA / Fartlek': 0, 'Côtes / Seuil': 0, 'Sortie Longue': 0, 'Renforcement': 0 };
+            const compteursTheorique = { 'Endurance': 0, 'VMA / Fartlek': 0, 'Côtes / Seuil': 0, 'Sortie Longue': 0, 'Renforcement': 0 };
+            
+            appData.theorique.forEach(s => {
+                const cat = mapPlanTypeToFormCategory(s.Type);
+                if (compteursTheorique[cat] !== undefined) compteursTheorique[cat]++;
+            });
+
+            appData.pratique.forEach(s => {
+                const t = s.Type_Realise || s.type_realise || 'Endurance';
+                if (compteursPratique[t] !== undefined) compteursPratique[t]++;
+            });
+
+            let htmlStr = "";
+            for (const [nomType, volumeRealise] of Object.entries(compteursPratique)) {
+                const badgeStyle = DESIGN_COULEURS[nomType].bg;
+                const volumeTotalPrevu = compteursTheorique[nomType] || 0;
+                htmlStr += `
+                    <div class="${badgeStyle} p-3 rounded-xl flex flex-col justify-center items-center shadow-xs text-white">
+                        <span class="text-[9px] uppercase opacity-90 tracking-wider font-bold">${nomType}</span>
+                        <span class="text-2xl font-black mt-0.5 leading-none">${volumeRealise}</span>
+                        <span class="text-[10px] opacity-75 font-normal mt-1">sur ${volumeTotalPrevu} prévues</span>
+                    </div>
+                `;
+            }
+            document.getElementById('type-indicators').innerHTML = htmlStr;
+        }
+
+        function renderConseils() {
+            const container = document.getElementById('conseil-container');
+            const sNum = getNumSemaineActuelle();
+            const sPratique = appData.pratique.filter(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                return sem === "Semaine " + sNum;
+            });
+            let totalRpe = 0;
+            sPratique.forEach(s => totalRpe += parseInt(s.Ressenti_RPE) || parseInt(s.ressenti_rpe) || 0);
+            const avgRpe = sPratique.length > 0 ? (totalRpe / sPratique.length) : 0;
+
+            const currentPhase = appData.theorique.filter(s => s.Semaine === "Semaine " + sNum)[0]?.Phase || "Entraînement";
+            let html = "";
+            
+            if (avgRpe >= 7.5) {
+                html += `<div class="p-4 rounded-xl bg-red-50 border border-red-200"><h4 class="font-bold text-red-800 text-sm">⚠️ Fatigue élevée</h4><p class="text-xs text-red-700 mt-1">RPE moyen de ${avgRpe.toFixed(1)}/10. Réduis l'intensité.</p></div>`;
+            }
+
+            if (currentPhase.includes("Thaïlande")) {
+                html += `<div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200"><h4 class="font-bold text-emerald-800 text-sm">🏝️ Mode Thaïlande</h4><p class="text-xs text-emerald-700 mt-1">Focus sur le plat et l'adaptation thermique.</p></div>`;
+            } else {
+                html += `<div class="p-4 rounded-xl bg-stone-100 border border-stone-200"><h4 class="font-bold text-stone-800 text-sm">🏃‍♂️ Conseil du coach</h4><p class="text-xs text-stone-600 mt-1">Soigne tes transitions marche/course sur tes sorties longues.</p></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        async function soumettreSeance(e) {
+            e.preventDefault();
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Envoi...";
+
+            const dateSaisie = document.getElementById('form-date').value;
+            const numSemaine = getNumSemaineDepuisDate(dateSaisie);
+
+            const nouvelleSeance = {
+                Semaine_Associee: "Semaine " + numSemaine,
+                semaine_associee: "Semaine " + numSemaine,
+                Distance_Km: parseFloat(document.getElementById('form-dist').value) || 0,
+                distance_km: parseFloat(document.getElementById('form-dist').value) || 0,
+                D_Plus_M: parseInt(document.getElementById('form-dplus').value) || 0,
+                d_plus_m: parseInt(document.getElementById('form-dplus').value) || 0,
+                Duree_Min: parseInt(document.getElementById('form-duree').value) || 0,
+                duree_min: parseInt(document.getElementById('form-duree').value) || 0,
+                Ressenti_RPE: parseInt(document.getElementById('form-rpe').value) || 5,
+                ressenti_rpe: parseInt(document.getElementById('form-rpe').value) || 5,
+                Type_Realise: document.getElementById('form-type').value || "Endurance",
+                type_realise: document.getElementById('form-type').value || "Endurance",
+                date_course: dateSaisie
+            };
+
+            appData.pratique.push(nouvelleSeance);
+            localStorage.setItem('trail_data_cache', JSON.stringify(appData));
+            
+            renderProgression();
+            renderConseils();
+
+            try {
+                // Envoi vers l'API Google Script
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nouvelleSeance)
+                });
+                showToast("Séance enregistrée localement et envoyée au serveur !");
+            } catch (err) {
+                let queue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
+                queue.push(nouvelleSeance);
+                localStorage.setItem('offline_queue', JSON.stringify(queue));
+                showToast("Erreur réseau. Enregistré en cache (mode hors-ligne).");
+            }
+
+            // Réinitialisation du formulaire
+            document.getElementById('form-dist').value = "";
+            document.getElementById('form-dplus').value = "";
+            document.getElementById('form-duree').value = "";
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                b.className = "tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all";
+            });
+            document.getElementById('form-type').value = "";
+            
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Valider la séance";
+            switchTab('progression');
+        }
+
+        renderProgression();
+        renderConseils();
+        fetchInitialData();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
+        }
+    </script>
+</body>
+</html>
