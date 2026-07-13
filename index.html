@@ -23,7 +23,7 @@
 <body class="flex flex-col min-h-screen pb-20 selection:bg-emerald-100">
 
     <script>
-        // TRÈS IMPORTANT : Remplacez cette chaîne par votre URL de déploiement Google Web App finale (/exec)
+        // Votre URL exacte a été configurée ici :
         const API_URL = "https://script.google.com/macros/s/AKfycbyoy24ZHaxXDhNADuZtRsZvxUcwMIwyVWOdcw8ve5i3rIcGRLDHNWQ6-XGSnb0FBocr/exec"; 
         
         const PLAN_INITIAL = [
@@ -72,7 +72,6 @@
         let instanceChartDist = null;
         let instanceChartDplus = null;
 
-        // Tri initial du plan par ordre chronologique strict
         function trierPlanTheorique() {
             appData.theorique.sort((a, b) => getExactDate(a.Dates, a.Jour) - getExactDate(b.Dates, b.Jour));
         }
@@ -120,7 +119,6 @@
             return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
         }
 
-        // Formate une plage "AAAA-MM-JJ au AAAA-MM-JJ" en "du JJ Mois au JJ Mois"
         function formatFrenchRange(datesStr) {
             if (!datesStr) return "";
             const parts = datesStr.split(" au ");
@@ -273,7 +271,7 @@
 
     <script>
         document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
-        trierPlanTheorique(); // Tri de sécurité immédiat au démarrage
+        trierPlanTheorique();
 
         const DESIGN_COULEURS = {
             'Endurance': { bg: 'bg-blue-600', border: 'border-blue-600', hex: '#2563eb' },
@@ -352,7 +350,6 @@
             
             if(sTheorique.length > 0) {
                 document.getElementById('current-phase-title').innerText = sTheorique[0].Phase;
-                // Affichage personnalisé de la plage de dates à la française
                 document.getElementById('current-week-title').innerText = labelSemaine + " : " + formatFrenchRange(sTheorique[0].Dates);
                 sTheorique.forEach(s => {
                     cibleDuree += parseFloat(s.Duree_Prevue_Min) || 0;
@@ -697,7 +694,7 @@
             switchTab('progression');
         }
 
-        // --- ENREGISTREMENT GESTE PULL TO REFRESH ---
+        // Geste Pull to refresh
         let touchStartY = 0;
         window.addEventListener('touchstart', function(e) {
             if (window.scrollY === 0) {
@@ -709,9 +706,8 @@
             if (touchStartY > 0) {
                 const currentY = e.touches[0].clientY;
                 const diff = currentY - touchStartY;
-                // Si l'utilisateur glisse vers le bas de plus de 130px depuis le haut
                 if (diff > 130) { 
-                    touchStartY = 0; // Bloque les déclenchements en boucle
+                    touchStartY = 0; 
                     pullToRefresh();
                 }
             }
@@ -721,7 +717,6 @@
             touchStartY = 0;
         }, { passive: true });
 
-        // Initialisation globale
         fetchInitialData();
     </script>
     <script>
