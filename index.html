@@ -3,689 +3,725 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mon Plan Trail - Veni Vici 2026</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <title>Veni Vici Prep</title>
+    <link class="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1e293b; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+        :root {
+            --bg-creme: #FDFBF7;
+            --txt-marron-fonce: #3E2723;
+            --marron-clair: #8D6E63;
+            --vert-foret: #2E7D32;
+            --vert-sauge: #E8F5E9;
+        }
+        body { background-color: var(--bg-creme); color: var(--txt-marron-fonce); font-family: system-ui, sans-serif; }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+<body class="flex flex-col min-h-screen pb-20 selection:bg-emerald-100">
 
-    <!-- HEADER & STATS -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur-md sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-emerald-500/10 text-emerald-400 rounded-xl border border-emerald-500/20">
-                    <i class="fa-solid fa-mountain-sun text-2xl"></i>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold tracking-tight">LA VENI VICI 2026</h1>
-                    <p class="text-xs text-slate-400">Objectif : 52 km • 1470m D+ • Sub-6h15/6h30</p>
-                </div>
-            </div>
+    <script>
+        // Votre URL exacte a été configurée ici :
+        const API_URL = "https://script.google.com/macros/s/AKfycbyoy24ZHaxXDhNADuZtRsZvxUcwMIwyVWOdcw8ve5i3rIcGRLDHNWQ6-XGSnb0FBocr/exec"; 
+        
+        const PLAN_INITIAL = [
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Mardi","Type":"Côtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 8x30\" en côte (descente RCV) + 15' EF"},
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Courir au feeling en aisance respiratoire pure (seuil 1)"},
+            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":100,"D_Plus_Prevu_M":400,"Description":"Rando-course en terrain varié, focus sur la régularité"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Mardi","Type":"Fartlek Plat","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(1' rapide / 1' lent) + 10' EF"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Course lente sous la chaleur (adaptation thermique)"},
+            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Mercredi","Type":"Seuil Plat","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x6' allure marathon (5'30/km) Récup 2' + 10' EF"},
+            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Samedi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Sortie continue en aisance totale"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Mardi","Type":"Fartlek Court","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"15' EF + 12x(30\" vite / 30\" lent) + 10' EF"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing de récupération active"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Mardi","Type":"Côtes courtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"15' EF + 10x40\" en côte dynamique + 15' EF"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing plat de récupération"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Samedi","Type":"Sortie Longue Trail","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Rando-course avec montées marchées actives et descentes souples"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Mardi","Type":"Seuil en Côte","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 4x4' montée rythmée (allure trail court) Récup descente + 10' EF"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Footing sur plat avec 3 accélérations de 15\" en fin de séance"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":140,"D_Plus_Prevu_M":600,"Description":"Bloc spécifique : inclure 2x15' à allure cible VV (Veni Vici)"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Mardi","Type":"Côtes Longues","Duree_Prevue_Min":60,"D_Plus_Prevu_M":350,"Description":"15' EF + 3x8' montée au train (Seuil anaérobie) Récup descente"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing de relâchement complet"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Samedi","Type":"Sortie Longue Majeure","Duree_Prevue_Min":160,"D_Plus_Prevu_M":700,"Description":"Parcours vallonné, travail des transitions marche/course"},
+            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Vendredi","Type":"Footing Reprise","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"Trot très souple sur le plat, écoute des sensations"},
+            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Dimanche","Type":"Footing Continu","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Endurance fondamentale pure, terrain souple (parc ou sous-bois)"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Mardi","Type":"Côtes Douces","Duree_Prevue_Min":45,"D_Plus_Prevu_M":120,"Description":"15' EF + 6x30\" en côte sans forcer + 15' EF"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing avec variations de rythme naturelles sur le plat"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Samedi","Type":"Sortie Longue Progressive","Duree_Prevue_Min":90,"D_Plus_Prevu_M":350,"Description":"Sortie trail douce, focus technique en descente"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Mardi","Type":"Seuil Spécifique","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x2000m sur plat ou faux-plat à allure marathon (5'30) R=2'"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Vendredi","Type":"Côtes Répétées","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 8x1' en bosse à 85% FCM, récup descente + 15' EF"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Dimanche","Type":"Sortie Longue Volume","Duree_Prevue_Min":180,"D_Plus_Prevu_M":800,"Description":"Rando-course de 3h. Test obligatoire du matériel et de la nutrition"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Mardi","Type":"Rappels de VMA","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(30\" à 100% VMA / 30\" EF) + 15' EF"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Vendredi","Type":"Pré-charge Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"Footing vallonné avec 3x3' de descente technique rythmée"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Samedi","Type":"Week-end Choc - J1","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Sortie trail active à allure cible"},
+            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Dimanche","Type":"Week-end Choc - J2","Duree_Prevue_Min":180,"D_Plus_Prevu_M":700,"Description":"Rando-course lente sur jambes fatiguées. Focus mental."},
+            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Mercredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing ultra-souple de récupération"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Samedi","Type":"Sortie Longue Allégée","Duree_Prevue_Min":90,"D_Plus_Prevu_M":300,"Description":"Sortie plaisir en sous-bois sans forcer dans les bosses"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Mardi","Type":"Seuil Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 2x10' à allure VV (Target 6h15) en terrain vallonné R=3'"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing d'entretien sur le plat"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Dimanche","Type":"Sortie Longue Courte","Duree_Prevue_Min":75,"D_Plus_Prevu_M":250,"Description":"Dernière sortie de plus d'une heure. Sensation de fraîcheur recherchée."},
+            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Mardi","Type":"Rappels dynamiques","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 6x200m plat dynamiques sans forcer + 15' EF"},
+            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Vendredi","Type":"Footing Éveil","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"Footing très tranquille avec quelques lignes droites souples"},
+            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Mercredi","Type":"Activation","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"20' EF + 3 accélérations progressives de 100m + 5' EF"},
+            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Samedi","Type":"JOUR DE LA COURSE","Duree_Prevue_Min":375,"D_Plus_Prevu_M":1470,"Description":"LA VENI VICI (52km - 1470m D+). Gestion, plaisir et mental !"}
+        ];
+
+        let appData = { theorique: PLAN_INITIAL, pratique: [] };
+        let instanceChartDist = null;
+        let instanceChartDplus = null;
+
+        function trierPlanTheorique() {
+            appData.theorique.sort((a, b) => getExactDate(a.Dates, a.Jour) - getExactDate(b.Dates, b.Jour));
+        }
+
+        async function fetchInitialData() {
+            try {
+                const res = await fetch(API_URL);
+                const json = await res.json();
+                if(json.theorique && json.theorique.length > 0) appData.theorique = json.theorique;
+                appData.pratique = json.pratique || [];
+                trierPlanTheorique();
+                localStorage.setItem('trail_data_cache', JSON.stringify(appData));
+            } catch (e) {
+                const cache = localStorage.getItem('trail_data_cache');
+                if (cache) appData = JSON.parse(cache);
+                trierPlanTheorique();
+            }
+            renderProgression();
+            renderConseils();
+        }
+
+        function getExactDate(datesStr, jourStr) {
+            if (!datesStr) return new Date();
+            const parts = datesStr.split(" au ");
+            if (parts.length < 2) return new Date(parts[0]);
+            const start = new Date(parts[0]);
+            const end = new Date(parts[1]);
+            const daysMap = { "lundi": 1, "mardi": 2, "mercredi": 3, "jeudi": 4, "vendredi": 5, "samedi": 6, "dimanche": 0 };
+            const targetDay = daysMap[jourStr.trim().toLowerCase()];
             
-            <div class="flex items-center gap-4 text-sm">
-                <div class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50 text-center">
-                    <span class="text-xs text-slate-400 block uppercase font-semibold">Semaine Actuelle</span>
-                    <span id="current-week-badge" class="text-emerald-400 font-bold text-base">- / -</span>
-                </div>
-                <div class="bg-slate-800/80 px-4 py-2 rounded-xl border border-slate-700/50 text-center">
-                    <span class="text-xs text-slate-400 block uppercase font-semibold">Jours restants</span>
-                    <span id="countdown-badge" class="text-rose-400 font-bold text-base">- jours</span>
-                </div>
-                <button id="sync-btn" onclick="fetchSheetData()" class="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg border border-slate-700 transition">
-                    <i id="sync-icon" class="fa-solid fa-rotate"></i>
-                </button>
-            </div>
+            let current = new Date(start);
+            while (current <= end) {
+                if (current.getDay() === targetDay) {
+                    return new Date(current);
+                }
+                current.setDate(current.getDate() + 1);
+            }
+            return start;
+        }
+
+        function formatFullDate(dateObj) {
+            if (!dateObj) return "";
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            let str = dateObj.toLocaleDateString('fr-FR', options);
+            return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        function formatFrenchRange(datesStr) {
+            if (!datesStr) return "";
+            const parts = datesStr.split(" au ");
+            if (parts.length < 2) return datesStr;
+            const cap = s => s.split(' ').map(w => isNaN(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ');
+            const str1 = cap(new Date(parts[0]).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }));
+            const str2 = cap(new Date(parts[1]).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }));
+            return `du ${str1} au ${str2}`;
+        }
+    </script>
+
+    <header class="p-4 border-b border-stone-100 bg-white sticky top-0 z-10 flex justify-between items-center">
+        <div class="flex items-center space-x-2">
+            <span class="text-xl">👟</span>
+            <h1 class="text-sm font-black tracking-widest uppercase text-stone-800">Veni Vici 2026</h1>
         </div>
+        <button onclick="pullToRefresh()" class="text-xs px-3 py-1.5 rounded-full font-semibold transition-transform active:scale-95" style="background-color: var(--vert-sauge); color: var(--vert-foret)">🔄 Sync</button>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-8 space-y-8">
-        
-        <!-- WEEK SELECTOR -->
-        <section class="bg-slate-900/40 border border-slate-800 rounded-2xl p-4">
-            <h3 class="text-sm font-semibold text-slate-400 mb-3 uppercase tracking-wider">Navigation du Plan</h3>
-            <div id="week-tabs-container" class="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
-                <!-- Généré de façon dynamique -->
+    <div id="toast" class="hidden fixed top-16 left-4 right-4 bg-stone-800 text-white text-sm p-3 rounded-xl shadow-lg text-center z-50"></div>
+
+    <main id="page-progression" class="p-4 space-y-6 flex-1 max-w-xl mx-auto w-full">
+        <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-xs">
+            <span class="text-xs font-bold uppercase tracking-wider text-stone-400" id="current-phase-title">Reprise & Volume Initial</span>
+            <h2 class="text-sm font-black mt-0.5 text-stone-700" id="current-week-title">Semaine 1</h2>
+        </div>
+
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Objectifs de la semaine</h3>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Distance</span><span id="txt-dist" class="text-stone-500">0 / 0 km</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-dist" class="h-full transition-all duration-500" style="background-color: var(--marron-clair); width: 0%"></div></div>
             </div>
-        </section>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Dénivelé (D+)</span><span id="txt-dplus" class="text-stone-500">0 / 0 m</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-dplus" class="h-full transition-all duration-500" style="background-color: var(--txt-marron-fonce); width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Séances Validées</span><span id="txt-seances" class="text-stone-500">0 / 0</span></div>
+                <div class="w-full bg-stone-200 h-2.5 rounded-full overflow-hidden"><div id="bar-seances" class="h-full transition-all duration-500" style="background-color: var(--vert-foret); width: 0%"></div></div>
+            </div>
+        </div>
 
-        <!-- MAIN LAYOUT: WEEK DETAILS & CHART -->
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
-            <!-- LEFT: CURRENT/SELECTED WEEK INFO -->
-            <section class="lg:col-span-7 space-y-6">
-                <div class="bg-slate-900/60 border border-slate-850 rounded-2xl p-6 relative overflow-hidden">
-                    <div class="absolute top-0 right-0 w-32 h-32 bg-emerald-500/5 rounded-full blur-3xl"></div>
-                    
-                    <div class="flex justify-between items-start mb-4">
-                        <div>
-                            <span id="selected-week-dates" class="text-xs font-semibold text-emerald-400 uppercase tracking-widest">DATES</span>
-                            <h2 id="selected-week-title" class="text-2xl font-black mt-1">Semaine 1</h2>
-                        </div>
-                        <span id="selected-week-phase" class="px-3 py-1 bg-slate-800 border border-slate-700 rounded-full text-xs font-semibold">Phase</span>
-                    </div>
+        <div class="bg-stone-100/70 p-5 rounded-2xl border border-stone-200/40 space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Progression globale (Objectif Course)</h3>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Distance totale cumulée</span><span id="txt-global-dist" class="text-stone-500">0 / 0 km</span></div>
+                <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden"><div id="bar-global-dist" class="h-full transition-all duration-500" style="background-color: var(--marron-clair); width: 0%"></div></div>
+            </div>
+            <div>
+                <div class="flex justify-between text-xs font-semibold mb-1"><span>Dénivelé total cumulé</span><span id="txt-global-dplus" class="text-stone-500">0 / 0 m</span></div>
+                <div class="w-full bg-stone-200 h-2 rounded-full overflow-hidden"><div id="bar-global-dplus" class="h-full transition-all duration-500" style="background-color: var(--txt-marron-fonce); width: 0%"></div></div>
+            </div>
+        </div>
 
-                    <div class="bg-slate-950/50 border border-slate-850 rounded-xl p-4 mb-6">
-                        <h4 class="text-xs uppercase font-bold tracking-wider text-slate-400 mb-1">Focus de la semaine</h4>
-                        <p id="selected-week-focus" class="text-slate-200 text-sm italic">Focus detail...</p>
-                    </div>
+        <div class="space-y-2">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Les 3 prochaines séances du plan</h3>
+            <div id="next-sessions-container" class="space-y-2"></div>
+        </div>
 
-                    <!-- Sessions container -->
-                    <div class="space-y-4">
-                        <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider flex items-center gap-2">
-                            <i class="fa-solid fa-person-running text-emerald-400"></i> Séances de course
-                        </h3>
-                        <div id="sessions-list" class="space-y-3">
-                            <!-- Sessions injecting dynamically -->
-                        </div>
+        <div class="space-y-4">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Courbes d'évolution temporelle (Avant Course)</h3>
+            <div class="bg-white p-4 rounded-2xl border border-stone-100 shadow-xs">
+                <span class="text-xs font-bold text-stone-600 block mb-2">Distance Cumulée (km)</span>
+                <div class="h-44 relative w-full"><canvas id="chart-distance"></canvas></div>
+            </div>
+            <div class="bg-white p-4 rounded-2xl border border-stone-100 shadow-xs">
+                <span class="text-xs font-bold text-stone-600 block mb-2">Dénivelé Positif Cumulé (m)</span>
+                <div class="h-44 relative w-full"><canvas id="chart-dplus"></canvas></div>
+            </div>
+        </div>
 
-                        <!-- Strength Card -->
-                        <div id="strength-card" class="mt-4 p-4 bg-indigo-950/30 border border-indigo-900/30 rounded-xl flex justify-between items-center">
-                            <div class="flex items-center gap-3">
-                                <div class="p-2 bg-indigo-500/10 text-indigo-400 rounded-lg border border-indigo-500/20">
-                                    <i class="fa-solid fa-dumbbell"></i>
-                                </div>
-                                <div>
-                                    <h4 class="font-bold text-sm text-indigo-200">Renforcement Musculaire</h4>
-                                    <p class="text-xs text-indigo-300/80">Pilier clé de protection articulaire</p>
-                                </div>
-                            </div>
-                            <span id="strength-count" class="px-3 py-1 bg-indigo-500/20 text-indigo-300 font-extrabold rounded-full text-xs">0 séance</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- RIGHT: PERFORMANCE METRICS & CHARTS -->
-            <section class="lg:col-span-5 space-y-6">
-                <!-- Weekly load dynamics -->
-                <div class="bg-slate-900/60 border border-slate-850 rounded-2xl p-6">
-                    <h3 class="font-bold text-lg mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-chart-simple text-sky-400"></i> Dynamique d'Entraînement
-                    </h3>
-                    <div id="chart-bars-container" class="space-y-4">
-                        <!-- Chart generated dynamically -->
-                    </div>
-                </div>
-
-                <!-- Global plan progress -->
-                <div class="bg-slate-900/60 border border-slate-850 rounded-2xl p-6">
-                    <h3 class="font-bold text-sm text-slate-400 uppercase tracking-wider mb-4">Progression Globale</h3>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex justify-between text-xs mb-1">
-                                <span class="text-slate-400">Volume Horaire Total Cumulé</span>
-                                <span id="progress-hours-txt" class="font-bold text-emerald-400">0h / 0h</span>
-                            </div>
-                            <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
-                                <div id="progress-hours-bar" class="bg-emerald-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="flex justify-between text-xs mb-1">
-                                <span class="text-slate-400">Dénivelé Positif Cumulé</span>
-                                <span id="progress-dplus-txt" class="font-bold text-sky-400">0m / 0m</span>
-                            </div>
-                            <div class="w-full bg-slate-950 rounded-full h-2 border border-slate-800 overflow-hidden">
-                                <div id="progress-dplus-bar" class="bg-sky-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div class="space-y-3">
+            <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Séances réalisées par catégorie</h3>
+            <div id="type-indicators" class="grid grid-cols-2 gap-2 text-white text-center text-xs font-bold"></div>
         </div>
     </main>
 
-    <footer class="border-t border-slate-900 bg-slate-950 py-8 text-center text-xs text-slate-500">
-        <p>Mon Plan Trail • Version 2026.4 Dynamique</p>
-        <p class="mt-1">Propulsé par Google Sheets & Tailored JavaScript</p>
-    </footer>
+    <main id="page-ajouter" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
+        <h2 class="text-xl font-bold">Enregistrer un entraînement</h2>
+        <form id="form-seance" onsubmit="soumettreSeance(event)" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1 text-stone-600">Date de la sortie</label>
+                <input type="date" id="form-date" required class="w-full p-3 rounded-xl border border-stone-200 bg-white">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2 text-stone-600">Type de séance</label>
+                <div class="flex flex-wrap gap-2" id="tag-container">
+                    <button type="button" onclick="selectTag(this, 'Endurance')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Endurance</button>
+                    <button type="button" onclick="selectTag(this, 'VMA / Fartlek')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">VMA / Fartlek</button>
+                    <button type="button" onclick="selectTag(this, 'Côtes / Seuil')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Côtes / Seuil</button>
+                    <button type="button" onclick="selectTag(this, 'Sortie Longue')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Sortie Longue</button>
+                    <button type="button" onclick="selectTag(this, 'Renforcement')" class="tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all">Renforcement</button>
+                </div>
+                <input type="hidden" id="form-type" required>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">Distance (km)</label>
+                    <input type="number" step="0.1" id="form-dist" class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0.0">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">D+ (m)</label>
+                    <input type="number" id="form-dplus" class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-stone-500 mb-1">Durée (min)</label>
+                    <input type="number" id="form-duree" required class="w-full p-3 rounded-xl border border-stone-200 bg-white" placeholder="0">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-1 text-stone-600">Ressenti (RPE : <span id="rpe-val">5</span>/10)</label>
+                <input type="range" min="1" max="10" id="form-rpe" value="5" oninput="document.getElementById('rpe-val').innerText=this.value" class="w-full accent-emerald-700">
+            </div>
+            <button type="submit" class="w-full p-4 rounded-xl font-bold text-white shadow-md transition-transform active:scale-98" style="background-color: var(--vert-foret)">Valider la séance</button>
+        </form>
+    </main>
+
+    <main id="page-programme" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
+        <div class="flex justify-between items-center">
+            <h2 class="text-xl font-bold">Programme de Préparation</h2>
+            <span id="prog-total-count" class="text-xs font-bold px-2.5 py-1 rounded-full text-stone-600 bg-stone-200/60">0 séances</span>
+        </div>
+        <div id="programme-list-container" class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1"></div>
+    </main>
+
+    <main id="page-conseil" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
+        <h2 class="text-xl font-bold">L'Analyse du Coach</h2>
+        <div id="conseil-container" class="space-y-4"></div>
+    </main>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 h-16 flex justify-center items-center gap-2 z-10">
+        <button onclick="switchTab('progression')" class="w-20 flex flex-col items-center text-center text-[10px] font-bold space-y-0.5 text-emerald-800 transition-transform active:scale-95">
+            <span class="text-lg">⚡</span>
+            <span>Progression</span>
+        </button>
+        <button onclick="switchTab('ajouter')" class="w-20 flex flex-col items-center text-center text-[10px] font-bold space-y-0.5 text-stone-400 transition-transform active:scale-95">
+            <span class="text-lg">☑️</span>
+            <span>Ajouter</span>
+        </button>
+        <button onclick="switchTab('programme')" class="w-20 flex flex-col items-center text-center text-[10px] font-bold space-y-0.5 text-stone-400 transition-transform active:scale-95">
+            <span class="text-lg">📅</span>
+            <span>Programme</span>
+        </button>
+        <button onclick="switchTab('conseil')" class="w-20 flex flex-col items-center text-center text-[10px] font-bold space-y-0.5 text-stone-400 transition-transform active:scale-95">
+            <span class="text-lg">💡</span>
+            <span>Conseil</span>
+        </button>
+    </nav>
 
     <script>
-        // CONFIGURATION DU PLAN D'ENTRAÎNEMENT (100% Dynamique)
-        const dateDebutPlan = new Date("2026-07-14");
-        const dateCourse = new Date("2026-11-07");
+        document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+        trierPlanTheorique();
 
-        // LIEN GOOGLE SHEETS API (A remplacer si vous connectez le Sheet en direct)
-        const SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vS_V_V_V_V_V_YOUR_ID/pub?output=json";
+        const DESIGN_COULEURS = {
+            'Endurance': { bg: 'bg-blue-600', border: 'border-blue-600', hex: '#2563eb' },
+            'VMA / Fartlek': { bg: 'bg-purple-600', border: 'border-purple-600', hex: '#9333ea' },
+            'Côtes / Seuil': { bg: 'bg-orange-600', border: 'border-orange-600', hex: '#ea580c' },
+            'Sortie Longue': { bg: 'bg-emerald-600', border: 'border-emerald-600', hex: '#059669' },
+            'Renforcement': { bg: 'bg-rose-600', border: 'border-rose-600', hex: '#e11d48' }
+        };
 
-        // COPIE DE SECOURS DU PLAN (17 semaines) - Utilisé en cas d'absence de réseau ou d'erreur Sheet
-        const PLAN_INITIAL = [
-            {
-                "week_number": 1,
-                "dates": "2026-07-14 au 2026-07-19",
-                "phase": "Mise en route anticipée",
-                "focus": "Reprise progressive et évaluation des sensations.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Footing", "duration_min": 45, "description": "Endurance Fondamentale pure sur terrain plat.", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Côtes courtes", "duration_min": 45, "description": "15' EF + 6x30\" en côte (descente RCV) + 15' EF", "d_plus_m": 100 },
-                    { "day": "Dimanche", "type": "Sortie Trail Courte", "duration_min": 75, "description": "Sortie souple avec peu de dénivelé", "d_plus_m": 200 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 2,
-                "dates": "2026-07-20 au 2026-07-26",
-                "phase": "Volume Initial",
-                "focus": "Réactivation aérobie et renforcement musculaire avant le départ.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Côtes", "duration_min": 50, "description": "15' EF + 8x30\" en côte (descente RCV) + 15' EF", "d_plus_m": 150 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 50, "description": "Courir au feeling en aisance respiratoire pure", "d_plus_m": 0 },
-                    { "day": "Dimanche", "type": "Sortie Longue Trail", "duration_min": 100, "description": "Rando-course en terrain varié, focus sur la régularité", "d_plus_m": 400 }
-                ],
-                "strength_sessions": 2
-            },
-            {
-                "week_number": 3,
-                "dates": "2026-07-27 au 2026-08-02",
-                "phase": "Transition Thaïlande",
-                "focus": "Départ le 30/07. Contrainte Thaïlande : Uniquement plat, <1h.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Fartlek Plat", "duration_min": 45, "description": "15' EF + 10x(1' rapide / 1' lent) + 10' EF", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Endurance Fondamentale", "duration_min": 45, "description": "Course lente sous la chaleur (adaptation)", "d_plus_m": 0 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 4,
-                "dates": "2026-08-03 au 2026-08-09",
-                "phase": "Vacances Thaïlande - Maintien 1",
-                "focus": "Contrainte Thaïlande : Entretien VMA/Aérobie sur le plat, 2 séances max.",
-                "sessions": [
-                    { "day": "Mercredi", "type": "Seuil Plat", "duration_min": 50, "description": "15' EF + 3x6' allure marathon (5'30/km) Récup 2' + 10' EF", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "Endurance Fondamentale", "duration_min": 55, "description": "Sortie continue en aisance totale", "d_plus_m": 0 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 5,
-                "dates": "2026-08-10 au 2026-08-16",
-                "phase": "Vacances Thaïlande - Maintien 2",
-                "focus": "Contrainte Thaïlande : Fin de bloc allégé, fraîcheur.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Fartlek Court", "duration_min": 40, "description": "15' EF + 12x(30\" vite / 30\" lent) + 10' EF", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Endurance Fondamentale", "duration_min": 45, "description": "Footing de récupération active", "d_plus_m": 0 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 6,
-                "dates": "2026-08-17 au 2026-08-23",
-                "phase": "Retour & Réintroduction D+",
-                "focus": "Retour de vacances le 17/08. Réadaptation au dénivelé.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Côtes courtes", "duration_min": 50, "description": "15' EF + 10x40\" en côte dynamique + 15' EF", "d_plus_m": 200 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 50, "description": "Footing plat de récupération", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "Sortie Longue Trail", "duration_min": 120, "description": "Rando-course avec montées marchées", "d_plus_m": 500 }
-                ],
-                "strength_sessions": 2
-            },
-            {
-                "week_number": 7,
-                "dates": "2026-08-24 au 2026-08-30",
-                "phase": "Développement Spécifique 1",
-                "focus": "Augmentation du volume de travail en côte.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Seuil en Côte", "duration_min": 55, "description": "15' EF + 4x4' montée rythmée Récup descente + 10' EF", "d_plus_m": 250 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 55, "description": "Footing plat avec 3 accélérations", "d_plus_m": 0 },
-                    { "day": "Dimanche", "type": "Sortie Longue Trail", "duration_min": 140, "description": "Bloc spécifique : 2x15' allure VV", "d_plus_m": 600 }
-                ],
-                "strength_sessions": 2
-            },
-            {
-                "week_number": 8,
-                "dates": "2026-08-31 au 2026-09-06",
-                "phase": "Charge Pré-Opératoire",
-                "focus": "Dernier gros bloc avant l'arrêt chirurgical.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Côtes Longues", "duration_min": 60, "description": "15' EF + 3x8' montée au train, récup descente", "d_plus_m": 350 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 50, "description": "Footing de relâchement complet", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "Sortie Longue Majeure", "duration_min": 160, "description": "Parcours vallonné, transitions marche/course", "d_plus_m": 700 }
-                ],
-                "strength_sessions": 2
-            },
-            {
-                "week_number": 9,
-                "dates": "2026-09-07 au 2026-09-13",
-                "phase": "Arrêt Chirurgical - Repos Total",
-                "focus": "Opération le 07/09. Repos strict absolu.",
-                "sessions": [],
-                "strength_sessions": 0
-            },
-            {
-                "week_number": 10,
-                "dates": "2026-09-14 au 2026-09-20",
-                "phase": "Reprise Post-Opératoire Douce",
-                "focus": "Fin de l'arrêt le 17/09. Reprise exclusive sur le plat.",
-                "sessions": [
-                    { "day": "Vendredi", "type": "Footing Reprise", "duration_min": 30, "description": "Trot très souple sur le plat, écoute des sensations", "d_plus_m": 0 },
-                    { "day": "Dimanche", "type": "Footing Continu", "duration_min": 45, "description": "Endurance fondamentale pure, terrain souple", "d_plus_m": 0 }
-                ],
-                "strength_sessions": 0
-            },
-            {
-                "week_number": 11,
-                "dates": "2026-09-21 au 2026-09-27",
-                "phase": "Reconstruction & Rythme",
-                "focus": "Réintroduction progressive D+.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Côtes Douces", "duration_min": 45, "description": "15' EF + 6x30\" en côte sans forcer + 15' EF", "d_plus_m": 120 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 50, "description": "Footing sur le plat", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "Sortie Longue Progressive", "duration_min": 90, "description": "Sortie trail douce", "d_plus_m": 350 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 12,
-                "dates": "2026-09-28 au 2026-10-04",
-                "phase": "Bloc Spécifique Trail - Pic 1",
-                "focus": "Volume kilométrique et D+.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Seuil Spécifique", "duration_min": 55, "description": "15' EF + 3x2000m plat allure marathon", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Côtes Répétées", "duration_min": 55, "description": "15' EF + 8x1' bosse à 85% FCM", "d_plus_m": 250 },
-                    { "day": "Dimanche", "type": "Sortie Longue Volume", "duration_min": 180, "description": "Rando-course de 3h, test matériel/nutrition", "d_plus_m": 800 }
-                ],
-                "strength_sessions": 2
-            },
-            {
-                "week_number": 13,
-                "dates": "2026-10-05 au 2026-10-11",
-                "phase": "Bloc Spécifique - Week-end Choc",
-                "focus": "Fatigue cumulative.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Rappels VMA", "duration_min": 50, "description": "15' EF + 10x(30\"/30\") + 15' EF", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Pré-charge", "duration_min": 50, "description": "Footing vallonné", "d_plus_m": 200 },
-                    { "day": "Samedi", "type": "Week-end Choc J1", "duration_min": 120, "description": "Sortie trail active", "d_plus_m": 500 },
-                    { "day": "Dimanche", "type": "Week-end Choc J2", "duration_min": 180, "description": "Rando-course sur jambes lourdes", "d_plus_m": 700 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 14,
-                "dates": "2026-10-12 au 2026-10-18",
-                "phase": "Assimilation",
-                "focus": "Surcompensation.",
-                "sessions": [
-                    { "day": "Mercredi", "type": "Endurance Fondamentale", "duration_min": 50, "description": "Footing de récupération", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "Sortie Longue Allégée", "duration_min": 90, "description": "Sortie plaisir sans forcer", "d_plus_m": 300 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 15,
-                "dates": "2026-10-19 au 2026-10-25",
-                "phase": "Affûtage - Étape 1",
-                "focus": "Diminution du volume.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Seuil Trail", "duration_min": 50, "description": "15' EF + 2x10' allure VV R=3'", "d_plus_m": 150 },
-                    { "day": "Jeudi", "type": "Endurance Fondamentale", "duration_min": 45, "description": "Footing plat", "d_plus_m": 0 },
-                    { "day": "Dimanche", "type": "Sortie Longue Courte", "duration_min": 75, "description": "Dernière sortie >1h", "d_plus_m": 250 }
-                ],
-                "strength_sessions": 1
-            },
-            {
-                "week_number": 16,
-                "dates": "2026-10-26 au 2026-11-01",
-                "phase": "Affûtage - Étape 2",
-                "focus": "Stockage glycogène, repos nerveux.",
-                "sessions": [
-                    { "day": "Mardi", "type": "Rappels dynamiques", "duration_min": 45, "description": "15' EF + 6x200m plat", "d_plus_m": 0 },
-                    { "day": "Vendredi", "type": "Footing Éveil", "duration_min": 40, "description": "Footing tranquille, lignes droites", "d_plus_m": 0 }
-                ],
-                "strength_sessions": 0
-            },
-            {
-                "week_number": 17,
-                "dates": "2026-11-02 au 2026-11-08",
-                "phase": "Semaine de Course",
-                "focus": "Objectif Veni Vici !",
-                "sessions": [
-                    { "day": "Mercredi", "type": "Activation", "duration_min": 30, "description": "20' EF + 3 accélérations 100m", "d_plus_m": 0 },
-                    { "day": "Samedi", "type": "COURSE", "duration_min": 375, "description": "LA VENI VICI (52km - 1470m D+)", "d_plus_m": 1470 }
-                ],
-                "strength_sessions": 0
-            }
-        ];
-
-        let planActuel = [...PLAN_INITIAL];
-        let semaineSelectionnee = 1;
-
-        // INITIALISATION DE L'APPLICATION
-        window.addEventListener('DOMContentLoaded', () => {
-            detecterSemaineActuelle();
-            genererCompteARebours();
-            initialiserApp(planActuel);
-        });
-
-        function initialiserApp(plan) {
-            genererSélecteurSemaines(plan);
-            afficherSemaine(semaineSelectionnee, plan);
-            calculerEtAfficherProgression(plan);
-            genererGraphiqueVolume(plan);
+        function mapPlanTypeToFormCategory(t) {
+            if (!t) return 'Endurance';
+            if (t.includes('Endurance') || t.includes('Footing') || t.includes('Activation')) return 'Endurance';
+            if (t.includes('VMA') || t.includes('Fartlek') || t.includes('Rappels')) return 'VMA / Fartlek';
+            if (t.includes('Côtes') || t.includes('Seuil')) return 'Côtes / Seuil';
+            if (t.includes('Sortie Longue') || t.includes('Week-end Choc') || t.includes('COURSE')) return 'Sortie Longue';
+            if (t.includes('Renforcement')) return 'Renforcement';
+            return 'Endurance';
         }
 
-        // COMPTEUR DE SEMAINES & COMPTE A REBOURS DYNAMIQUES
-        function detecterSemaineActuelle() {
-            const aujourdhui = new Date();
-            const diffTemps = aujourdhui - dateDebutPlan;
-            const diffJours = Math.floor(diffTemps / (1000 * 60 * 60 * 24));
+        function switchTab(tabName) {
+            document.querySelectorAll('main').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${tabName}`).classList.remove('hidden');
+            const navButtons = document.querySelectorAll('nav button');
+            navButtons.forEach(btn => btn.classList.replace('text-emerald-800', 'text-stone-400'));
             
-            let numSemaine = Math.floor(diffJours / 7) + 1;
+            let activeIdx = 0;
+            if (tabName === 'progression') activeIdx = 0;
+            else if (tabName === 'ajouter') activeIdx = 1;
+            else if (tabName === 'programme') activeIdx = 2;
+            else if (tabName === 'conseil') activeIdx = 3;
             
-            if (numSemaine < 1) numSemaine = 1;
-            if (numSemaine > planActuel.length) numSemaine = planActuel.length;
-            
-            semaineSelectionnee = numSemaine;
-            document.getElementById("current-week-badge").textContent = `S${numSemaine} / S${planActuel.length}`;
+            navButtons[activeIdx].classList.replace('text-stone-400', 'text-emerald-800');
         }
 
-        function genererCompteARebours() {
-            const aujourdhui = new Date();
-            const diffTemps = dateCourse - aujourdhui;
-            const diffJours = Math.ceil(diffTemps / (1000 * 60 * 60 * 24));
-            
-            const badge = document.getElementById("countdown-badge");
-            if (diffJours > 0) {
-                badge.textContent = `${diffJours} jours`;
-            } else if (diffJours === 0) {
-                badge.textContent = "JOUR J !";
-                badge.className = "text-yellow-400 font-bold text-base animate-pulse";
-            } else {
-                badge.textContent = "Terminé !";
-                badge.className = "text-slate-400 font-bold text-base";
-            }
-        }
-
-        // NAVIGATION DYNAMIQUE
-        function genererSélecteurSemaines(plan) {
-            const container = document.getElementById("week-tabs-container");
-            container.innerHTML = "";
-            
-            plan.forEach(w => {
-                const button = document.createElement("button");
-                const estActuelle = (w.week_number === semaineSelectionnee);
-                
-                button.className = `px-4 py-3 rounded-xl font-bold transition flex flex-col items-center min-w-[75px] shrink-0 border ${
-                    estActuelle 
-                    ? "bg-emerald-500 border-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20" 
-                    : "bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800"
-                }`;
-                button.onclick = () => changerSemaine(w.week_number, plan);
-                button.id = `tab-s${w.week_number}`;
-                
-                button.innerHTML = `
-                    <span class="text-[10px] uppercase opacity-70">Sem.</span>
-                    <span class="text-lg">${w.week_number}</span>
-                `;
-                container.appendChild(button);
+        function selectTag(btn, type) {
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                b.className = "tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all";
             });
-            
-            // Centrer l'onglet de la semaine courante
-            setTimeout(() => {
-                const selectedTab = document.getElementById(`tab-s${semaineSelectionnee}`);
-                if (selectedTab) {
-                    selectedTab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-                }
-            }, 100);
+            const cfg = DESIGN_COULEURS[type];
+            btn.className = `tag-btn px-3 py-2 rounded-lg border text-sm font-bold text-white shadow-xs ${cfg.bg} ${cfg.border}`;
+            document.getElementById('form-type').value = type;
         }
 
-        function changerSemaine(weekNum, plan) {
-            // Retirer le style actif du bouton précédent
-            const ancBouton = document.getElementById(`tab-s${semaineSelectionnee}`);
-            if (ancBouton) {
-                ancBouton.className = "px-4 py-3 rounded-xl font-bold transition flex flex-col items-center min-w-[75px] shrink-0 border bg-slate-900 border-slate-800 text-slate-300 hover:bg-slate-800";
-            }
-            
-            semaineSelectionnee = weekNum;
-            
-            // Appliquer le style actif au nouveau bouton
-            const nouvBouton = document.getElementById(`tab-s${weekNum}`);
-            if (nouvBouton) {
-                nouvBouton.className = "px-4 py-3 rounded-xl font-bold transition flex flex-col items-center min-w-[75px] shrink-0 border bg-emerald-500 border-emerald-400 text-slate-950 shadow-lg shadow-emerald-500/20";
-            }
-            
-            afficherSemaine(weekNum, plan);
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.classList.remove('hidden');
+            setTimeout(() => t.classList.add('hidden'), 4000);
         }
 
-        // AFFICHAGE DES SÉANCES DE LA SEMAINE CHOISIE
-        function afficherSemaine(weekNum, plan) {
-            const data = plan.find(w => w.week_number === weekNum);
-            if (!data) return;
+        async function pullToRefresh() {
+            showToast("Mise à jour des données...");
+            await fetchInitialData();
+            showToast("Données synchronisées !");
+        }
 
-            document.getElementById("selected-week-title").textContent = `Semaine ${data.week_number}`;
-            document.getElementById("selected-week-dates").textContent = data.dates;
-            document.getElementById("selected-week-phase").textContent = data.phase;
-            document.getElementById("selected-week-focus").textContent = data.focus;
-            
-            const sessionsContainer = document.getElementById("sessions-list");
-            sessionsContainer.innerHTML = "";
-            
-            if (data.sessions.length === 0) {
-                sessionsContainer.innerHTML = `
-                    <div class="p-6 bg-slate-950/40 border border-dashed border-slate-800 rounded-xl text-center text-slate-400">
-                        <i class="fa-solid fa-bed text-2xl mb-2 text-slate-500"></i>
-                        <p class="text-sm font-semibold">Aucun entraînement planifié</p>
-                        <p class="text-xs text-slate-500 mt-0.5">Repos complet, régénération musculaire et immunitaire.</p>
-                    </div>
-                `;
-            } else {
-                data.sessions.forEach(s => {
-                    const seanceDiv = document.createElement("div");
-                    seanceDiv.className = "p-4 bg-slate-950/70 border border-slate-850 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-800 transition";
-                    
-                    // Style par défaut par type de séance
-                    let typeBadgeClass = "bg-slate-800 text-slate-300 border border-slate-700";
-                    if (s.type.includes("Longue") || s.type.includes("COURSE")) {
-                        typeBadgeClass = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                    } else if (s.type.includes("Côtes") || s.type.includes("Seuil")) {
-                        typeBadgeClass = "bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                    } else if (s.type.includes("Fartlek") || s.type.includes("VMA")) {
-                        typeBadgeClass = "bg-sky-500/10 text-sky-400 border border-sky-500/20";
-                    }
+        function getNumSemaineDepuisDate(dateStr) {
+            const d = new Date(dateStr);
+            const dateDebutPlan = new Date("2026-07-18");
+            const diff = d - dateDebutPlan;
+            const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
+            if (jours < 0) return 1;
+            const sem = Math.floor(jours / 7) + 1;
+            return sem <= 16 ? sem : 16;
+        }
 
-                    seanceDiv.innerHTML = `
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xs font-black uppercase text-slate-400 bg-slate-900 px-2 py-0.5 rounded border border-slate-800">${s.day}</span>
-                                <span class="px-2 py-0.5 rounded text-xs font-bold ${typeBadgeClass}">${s.type}</span>
-                            </div>
-                            <p class="text-sm text-slate-200 mt-1">${s.description}</p>
-                        </div>
-                        <div class="flex items-center gap-4 shrink-0 justify-end">
-                            <div class="text-right">
-                                <div class="text-sm font-extrabold text-slate-100 flex items-center gap-1 justify-end">
-                                    <i class="fa-regular fa-clock text-slate-400 text-xs"></i> ${s.duration_min} min
-                                </div>
-                                <div class="text-xs text-slate-400 font-semibold flex items-center gap-1 justify-end">
-                                    <i class="fa-solid fa-arrow-trend-up text-slate-500"></i> ${s.d_plus_m}m D+
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                    sessionsContainer.appendChild(seanceDiv);
+        function getNumSemaineActuelle() {
+            return getNumSemaineDepuisDate(new Date());
+        }
+
+        function renderProgression() {
+            const sNum = getNumSemaineActuelle();
+            const labelSemaine = "Semaine " + sNum;
+            
+            const sTheorique = appData.theorique.filter(s => s.Semaine === labelSemaine);
+            let cibleDuree = 0, cibleDplus = 0, cibleSeances = sTheorique.length;
+            
+            if(sTheorique.length > 0) {
+                document.getElementById('current-phase-title').innerText = sTheorique[0].Phase;
+                document.getElementById('current-week-title').innerText = labelSemaine + " : " + formatFrenchRange(sTheorique[0].Dates);
+                sTheorique.forEach(s => {
+                    cibleDuree += parseFloat(s.Duree_Prevue_Min) || 0;
+                    cibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
                 });
             }
 
-            // Gestion du renforcement
-            const strengthCount = document.getElementById("strength-count");
-            if (data.strength_sessions > 0) {
-                strengthCount.textContent = `${data.strength_sessions} séance${data.strength_sessions > 1 ? 's' : ''}`;
-                strengthCount.className = "px-3 py-1 bg-indigo-500/20 text-indigo-300 font-extrabold rounded-full text-xs";
-            } else {
-                strengthCount.textContent = "Repos renfo";
-                strengthCount.className = "px-3 py-1 bg-slate-800 text-slate-500 font-bold rounded-full text-xs";
-            }
-        }
+            const sPratique = appData.pratique.filter(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                return sem === labelSemaine;
+            });
 
-        // CALCUL DE LA PROGRESSION GLOBALE (100% Dynamique)
-        function calculerEtAfficherProgression(plan) {
-            let totalDureePlan = 0;
-            let totalDPlusPlan = 0;
-            
-            let dureeRealisee = 0;
-            let dPlusRealise = 0;
+            let realDist = 0, realDplus = 0, realSeances = sPratique.length;
+            sPratique.forEach(s => {
+                realDist += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                realDplus += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
+            });
 
-            plan.forEach(w => {
-                const wDuration = w.sessions.reduce((acc, s) => acc + s.duration_min, 0);
-                const wDPlus = w.sessions.reduce((acc, s) => acc + s.d_plus_m, 0);
-                
-                totalDureePlan += wDuration;
-                totalDPlusPlan += wDPlus;
+            let cibleDist = (cibleDuree / 60) * 10; 
+            if (sNum === 16) cibleDist = 52;
 
-                // On considère comme réalisé tout ce qui est avant la semaine actuelle incluse
-                if (w.week_number <= semaineSelectionnee) {
-                    dureeRealisee += wDuration;
-                    dPlusRealise += wDPlus;
+            document.getElementById('txt-dist').innerText = `${realDist.toFixed(1)} / ${cibleDist.toFixed(0)} km`;
+            document.getElementById('txt-dplus').innerText = `${realDplus} / ${cibleDplus} m`;
+            document.getElementById('txt-seances').innerText = `${realSeances} / ${cibleSeances}`;
+
+            document.getElementById('bar-dist').style.width = Math.min((realDist / (cibleDist || 1)) * 100, 100) + "%";
+            document.getElementById('bar-dplus').style.width = Math.min((realDplus / (cibleDplus || 1)) * 100, 100) + "%";
+            document.getElementById('bar-seances').style.width = Math.min((realSeances / (cibleSeances || 1)) * 100, 100) + "%";
+
+            let arrLabels = [];
+            let arrTheoDistCumul = [];
+            let arrTheoDplusCumul = [];
+            let arrRealDistCumul = [];
+            let arrRealDplusCumul = [];
+
+            let runningTheoDist = 0;
+            let runningTheoDplus = 0;
+            let runningRealDist = 0;
+            let runningRealDplus = 0;
+
+            let maxWeekLogged = sNum;
+            appData.pratique.forEach(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                if (sem) {
+                    const num = parseInt(sem.replace("Semaine ", ""));
+                    if (!isNaN(num) && num > maxWeekLogged) maxWeekLogged = num;
                 }
             });
 
-            // Conversion en Heures
-            const totalHeuresPlan = Math.round(totalDureePlan / 60);
-            const heuresRealisees = Math.round(dureeRealisee / 60);
+            for (let w = 1; w <= 15; w++) {
+                arrLabels.push("S" + w);
+                const loopSemaineLabel = "Semaine " + w;
+                
+                const elementsTheo = appData.theorique.filter(s => s.Semaine === loopSemaineLabel);
+                let theoDurSem = 0, theoDplusSem = 0;
+                elementsTheo.forEach(s => {
+                    theoDurSem += parseFloat(s.Duree_Prevue_Min) || 0;
+                    theoDplusSem += parseInt(s.D_Plus_Prevu_M) || 0;
+                });
+                let theoDistSem = (theoDurSem / 60) * 10;
 
-            // Remplissage textes
-            document.getElementById("progress-hours-txt").textContent = `${heuresRealisees}h / ${totalHeuresPlan}h`;
-            document.getElementById("progress-dplus-txt").textContent = `${dPlusRealise.toLocaleString()}m / ${totalDPlusPlan.toLocaleString()}m`;
+                runningTheoDist += theoDistSem;
+                runningTheoDplus += theoDplusSem;
+                arrTheoDistCumul.push(runningTheoDist);
+                arrTheoDplusCumul.push(runningTheoDplus);
 
-            // Remplissage barres
-            const pctHeures = Math.min(100, (heuresRealisees / totalHeuresPlan) * 100);
-            const pctDPlus = Math.min(100, (dPlusRealise / totalDPlusPlan) * 100);
+                if (w <= maxWeekLogged) {
+                    const elementsPrat = appData.pratique.filter(s => {
+                        const sem = s.Semaine_Associee || s.semaine_associee;
+                        return sem === loopSemaineLabel;
+                    });
+                    let pratDistSem = 0, pratDplusSem = 0;
+                    elementsPrat.forEach(s => {
+                        pratDistSem += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                        pratDplusSem += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
+                    });
+                    runningRealDist += pratDistSem;
+                    runningRealDplus += pratDplusSem;
+                    arrRealDistCumul.push(runningRealDist);
+                    arrRealDplusCumul.push(runningRealDplus);
+                } else {
+                    arrRealDistCumul.push(null);
+                    arrRealDplusCumul.push(null);
+                }
+            }
 
-            document.getElementById("progress-hours-bar").style.width = `${pctHeures}%`;
-            document.getElementById("progress-dplus-bar").style.width = `${pctDPlus}%`;
-        }
+            let totalPlanCibleDist = 0, totalPlanCibleDplus = 0;
+            appData.theorique.forEach(s => {
+                let d = parseFloat(s.Duree_Prevue_Min) || 0;
+                totalPlanCibleDist += (s.Semaine === "Semaine 16") ? 0 : (d / 60) * 10; 
+                totalPlanCibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
+            });
+            totalPlanCibleDist += 52; 
 
-        // GENERATION D'UN GRAPHIQUE BARRES RESPONSIVE (100% Dynamique)
-        function genererGraphiqueVolume(plan) {
-            const chartContainer = document.getElementById("chart-bars-container");
-            chartContainer.innerHTML = "";
-
-            // Etape 1 : Calculer les totaux de chaque semaine
-            const volumesHebdo = plan.map(w => {
-                const minutes = w.sessions.reduce((acc, s) => acc + s.duration_min, 0);
-                const dplus = w.sessions.reduce((acc, s) => acc + s.d_plus_m, 0);
-                return { weekNum: w.week_number, minutes, dplus };
+            let globalRealDist = 0, globalRealDplus = 0;
+            appData.pratique.forEach(s => {
+                globalRealDist += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
+                globalRealDplus += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
             });
 
-            // Etape 2 : Trouver les valeurs max pour l'échelle de hauteur relative (max barre = 100%)
-            const maxMinutes = Math.max(...volumesHebdo.map(v => v.minutes));
+            document.getElementById('txt-global-dist').innerText = `${globalRealDist.toFixed(1)} / ${totalPlanCibleDist.toFixed(0)} km`;
+            document.getElementById('txt-global-dplus').innerText = `${globalRealDplus} / ${totalPlanCibleDplus} m`;
+            document.getElementById('bar-global-dist').style.width = Math.min((globalRealDist / (totalPlanCibleDist || 1)) * 100, 100) + "%";
+            document.getElementById('bar-global-dplus').style.width = Math.min((globalRealDplus / (totalPlanCibleDplus || 1)) * 100, 100) + "%";
 
-            // Etape 3 : Créer les éléments visuels
-            volumesHebdo.forEach(v => {
-                const hauteurPourcentage = (v.minutes / maxMinutes) * 100;
-                const estSelectionnee = (v.weekNum === semaineSelectionnee);
+            renderThreeNextSessions(sNum, realSeances);
+            renderEvolutionCharts(arrLabels, arrTheoDistCumul, arrRealDistCumul, arrTheoDplusCumul, arrRealDplusCumul);
+            renderVolumeCategories();
+            renderProgramme(); 
+        }
 
-                // Conversion minutes en format H:MM ou min
-                const heuresAffichage = v.minutes >= 60 
-                    ? `${Math.floor(v.minutes/60)}h${String(v.minutes%60).padStart(2, '0')}`
-                    : `${v.minutes}min`;
+        function renderThreeNextSessions(currentWeekNum, completedThisWeekCount) {
+            const container = document.getElementById('next-sessions-container');
+            let globalStartIndex = appData.theorique.findIndex(s => s.Semaine === `Semaine ${currentWeekNum}`);
+            if (globalStartIndex === -1) globalStartIndex = 0;
 
-                const barDiv = document.createElement("div");
-                barDiv.className = "flex items-center gap-3 group cursor-pointer";
-                barDiv.onclick = () => changerSemaine(v.weekNum, plan);
+            let effectiveStartIndex = globalStartIndex + completedThisWeekCount;
+            const upcomingSessions = appData.theorique.slice(effectiveStartIndex, effectiveStartIndex + 3);
 
-                barDiv.innerHTML = `
-                    <span class="text-xs font-bold text-slate-400 w-8">S${v.weekNum}</span>
-                    <div class="flex-1 bg-slate-950/80 border border-slate-850 h-5 rounded overflow-hidden relative flex items-center px-2">
-                        <div class="absolute left-0 top-0 bottom-0 h-full transition-all duration-300 ${
-                            estSelectionnee 
-                            ? 'bg-emerald-500/30 border-r-2 border-emerald-400' 
-                            : 'bg-sky-500/10 group-hover:bg-sky-500/20'
-                        }" style="width: ${hauteurPourcentage}%"></div>
-                        <div class="relative z-10 w-full flex justify-between items-center text-[10px] font-semibold">
-                            <span class="${estSelectionnee ? 'text-emerald-300 font-bold' : 'text-slate-300'}">${heuresAffichage}</span>
-                            <span class="${estSelectionnee ? 'text-emerald-400' : 'text-slate-400'}">${v.dplus}m D+</span>
+            if(upcomingSessions.length === 0) {
+                container.innerHTML = `<p class="text-stone-400 text-xs italic bg-white p-3 rounded-xl border border-stone-100">Plus aucune séance programmée. En route pour la course !</p>`;
+                return;
+            }
+
+            let html = "";
+            upcomingSessions.forEach(seance => {
+                const exactDate = getExactDate(seance.Dates, seance.Jour);
+                const dateFormatee = formatFullDate(exactDate);
+
+                html += `
+                    <div class="bg-white p-3 rounded-xl border border-stone-100 shadow-2xs flex flex-col">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wide">${seance.Semaine} — ${dateFormatee}</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded-sm font-bold bg-stone-100 text-stone-700">${seance.Duree_Prevue_Min} min</span>
                         </div>
+                        <span class="font-bold text-sm mt-1 text-stone-800">${seance.Type}</span>
+                        <p class="text-xs text-stone-500 mt-0.5">${seance.Description}</p>
+                        ${seance.D_Plus_Prevu_M > 0 ? `<span class="text-[10px] font-bold text-emerald-700 mt-1">⛰️ +${seance.D_Plus_Prevu_M}m D+</span>` : ''}
                     </div>
                 `;
-                chartContainer.appendChild(barDiv);
+            });
+            container.innerHTML = html;
+        }
+
+        function renderProgramme() {
+            const container = document.getElementById('programme-list-container');
+            if (!container) return;
+
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            let html = "";
+            appData.theorique.forEach(seance => {
+                const exactDate = getExactDate(seance.Dates, seance.Jour);
+                const dateFormatee = formatFullDate(exactDate);
+
+                const compDate = new Date(exactDate);
+                compDate.setHours(0, 0, 0, 0);
+                const isPast = compDate < today;
+
+                const cardClass = isPast 
+                    ? "bg-stone-100/70 border-stone-200/60 opacity-60 text-stone-500" 
+                    : "bg-white border-stone-100 shadow-2xs text-stone-800";
+                const titleClass = isPast ? "text-stone-400 line-through font-medium" : "text-stone-800 font-bold";
+                const badgeStyle = isPast ? "bg-stone-200 text-stone-400" : "bg-stone-100 text-stone-700";
+
+                html += `
+                    <div class="p-3 rounded-xl border ${cardClass} flex flex-col transition-all">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-stone-400 uppercase tracking-wide">${seance.Semaine} — ${dateFormatee}</span>
+                            <span class="text-[11px] px-2 py-0.5 rounded-sm font-bold ${badgeStyle}">${seance.Duree_Prevue_Min} min</span>
+                        </div>
+                        <span class="text-sm mt-1 ${titleClass}">${seance.Type}</span>
+                        <p class="text-xs ${isPast ? 'text-stone-400' : 'text-stone-500'} mt-0.5">${seance.Description}</p>
+                        ${seance.D_Plus_Prevu_M > 0 ? `<span class="text-[10px] font-bold ${isPast ? 'text-stone-400' : 'text-emerald-700'} mt-1">⛰️ +${seance.D_Plus_Prevu_M}m D+</span>` : ''}
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            document.getElementById('prog-total-count').innerText = `${appData.theorique.length} séances`;
+        }
+
+        function renderEvolutionCharts(labels, theoDist, realDist, theoDplus, realDplus) {
+            const chartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                    y: { beginAtZero: true, ticks: { font: { size: 10 }, precision: 0 } }
+                },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) { return context.dataset.label + ': ' + Math.round(context.raw); }
+                        }
+                    }
+                }
+            };
+
+            if (instanceChartDist) instanceChartDist.destroy();
+            const ctxDist = document.getElementById('chart-distance').getContext('2d');
+            instanceChartDist = new Chart(ctxDist, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Théorique', data: theoDist, borderColor: '#cbd5e1', backgroundColor: 'transparent', tension: 0.1, borderWidth: 1.5, pointRadius: 0 },
+                        { label: 'Réalisé', data: realDist, borderColor: '#8D6E63', backgroundColor: 'transparent', tension: 0.1, borderWidth: 3, pointRadius: 2.5 }
+                    ]
+                },
+                options: chartOptions
+            });
+
+            if (instanceChartDplus) instanceChartDplus.destroy();
+            const ctxDplus = document.getElementById('chart-dplus').getContext('2d');
+            instanceChartDplus = new Chart(ctxDplus, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Théorique', data: theoDplus, borderColor: '#cbd5e1', backgroundColor: 'transparent', tension: 0.1, borderWidth: 1.5, pointRadius: 0 },
+                        { label: 'Réalisé', data: realDplus, borderColor: '#3E2723', backgroundColor: 'transparent', tension: 0.1, borderWidth: 3, pointRadius: 2.5 }
+                    ]
+                },
+                options: chartOptions
             });
         }
 
-        // RECUPERATION DES DONNEES DEPUIS GOOGLE SHEETS
-        function fetchSheetData() {
-            const btn = document.getElementById("sync-btn");
-            const icon = document.getElementById("sync-icon");
+        function renderVolumeCategories() {
+            const compteursPratique = { 'Endurance': 0, 'VMA / Fartlek': 0, 'Côtes / Seuil': 0, 'Sortie Longue': 0, 'Renforcement': 0 };
+            const compteursTheorique = { 'Endurance': 0, 'VMA / Fartlek': 0, 'Côtes / Seuil': 0, 'Sortie Longue': 0, 'Renforcement': 0 };
             
-            btn.disabled = true;
-            icon.classList.add("fa-spin", "text-emerald-400");
+            appData.theorique.forEach(s => {
+                const cat = mapPlanTypeToFormCategory(s.Type);
+                if (compteursTheorique[cat] !== undefined) compteursTheorique[cat]++;
+            });
 
-            fetch(SPREADSHEET_URL)
-                .then(response => {
-                    if (!response.ok) throw new Error("Erreur lors du chargement du fichier distant.");
-                    return response.json();
-                })
-                .then(data => {
-                    // Structure de parsing simplifiée :
-                    // On recrée dynamiquement la structure du plan si le JSON est valide
-                    const planParse = parseGoogleSheetJSON(data);
-                    if (planParse && planParse.length > 0) {
-                        planActuel = planParse;
-                        initialiserApp(planActuel);
-                        alert("Synchronisation Google Sheets réussie !");
-                    } else {
-                        throw new Error("Structure JSON de Google Sheets non reconnue.");
-                    }
-                })
-                .catch(err => {
-                    console.warn("Échec de la connexion à l'API Google Sheets :", err);
-                    alert("Impossible d'importer les données du Sheet. Mode hors-ligne activé avec le plan d'entraînement local (complet).");
-                    // On s'assure d'initialiser correctement avec le fallback local
-                    initialiserApp(planActuel);
-                })
-                .finally(() => {
-                    btn.disabled = false;
-                    icon.classList.remove("fa-spin", "text-emerald-400");
-                });
+            appData.pratique.forEach(s => {
+                const t = s.Type_Realise || s.type_realise || 'Endurance';
+                if (compteursPratique[t] !== undefined) compteursPratique[t]++;
+            });
+
+            let htmlStr = "";
+            for (const [nomType, volumeRealise] of Object.entries(compteursPratique)) {
+                const badgeStyle = DESIGN_COULEURS[nomType].bg;
+                const volumeTotalPrevu = compteursTheorique[nomType] || 0;
+                htmlStr += `
+                    <div class="${badgeStyle} p-3 rounded-xl flex flex-col justify-center items-center shadow-xs text-white">
+                        <span class="text-[9px] uppercase opacity-90 tracking-wider font-bold">${nomType}</span>
+                        <span class="text-2xl font-black mt-0.5 leading-none">${volumeRealise}</span>
+                        <span class="text-[10px] opacity-75 font-normal mt-1">sur ${volumeTotalPrevu} prévues</span>
+                    </div>
+                `;
+            }
+            document.getElementById('type-indicators').innerHTML = htmlStr;
         }
 
-        // Analyseur de structure Google Sheets personnalisable
-        function parseGoogleSheetJSON(data) {
+        function renderConseils() {
+            const container = document.getElementById('conseil-container');
+            const sNum = getNumSemaineActuelle();
+            const sPratique = appData.pratique.filter(s => {
+                const sem = s.Semaine_Associee || s.semaine_associee;
+                return sem === "Semaine " + sNum;
+            });
+            let totalRpe = 0;
+            sPratique.forEach(s => totalRpe += parseInt(s.Ressenti_RPE) || parseInt(s.ressenti_rpe) || 0);
+            const avgRpe = sPratique.length > 0 ? (totalRpe / sPratique.length) : 0;
+
+            const currentPhase = appData.theorique.filter(s => s.Semaine === "Semaine " + sNum)[0]?.Phase || "Entraînement";
+            let html = "";
+            
+            if (avgRpe >= 7.5) {
+                html += `<div class="p-4 rounded-xl bg-red-50 border border-red-200"><h4 class="font-bold text-red-800 text-sm">⚠️ Fatigue élevée</h4><p class="text-xs text-red-700 mt-1">RPE moyen de ${avgRpe.toFixed(1)}/10. Réduis l'intensité.</p></div>`;
+            }
+
+            if (currentPhase.includes("Thaïlande")) {
+                html += `<div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200"><h4 class="font-bold text-emerald-800 text-sm">🏝️ Mode Thaïlande</h4><p class="text-xs text-emerald-700 mt-1">Focus sur le plat et l'adaptation thermique.</p></div>`;
+            } else {
+                html += `<div class="p-4 rounded-xl bg-stone-100 border border-stone-200"><h4 class="font-bold text-stone-800 text-sm">🏃‍♂️ Conseil du coach</h4><p class="text-xs text-stone-600 mt-1">Soigne tes transitions marche/course sur tes sorties longues.</p></div>`;
+            }
+            container.innerHTML = html;
+        }
+
+        async function soumettreSeance(e) {
+            e.preventDefault();
+            const btnSubmit = e.target.querySelector('button[type="submit"]');
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "Envoi...";
+
+            const dateSaisie = document.getElementById('form-date').value;
+            const numSemaine = getNumSemaineDepuisDate(dateSaisie);
+
+            const nouvelleSeance = {
+                Semaine_Associee: "Semaine " + numSemaine,
+                semaine_associee: "Semaine " + numSemaine,
+                Distance_Km: parseFloat(document.getElementById('form-dist').value) || 0,
+                distance_km: parseFloat(document.getElementById('form-dist').value) || 0,
+                D_Plus_M: parseInt(document.getElementById('form-dplus').value) || 0,
+                d_plus_m: parseInt(document.getElementById('form-dplus').value) || 0,
+                Duree_Min: parseInt(document.getElementById('form-duree').value) || 0,
+                duree_min: parseInt(document.getElementById('form-duree').value) || 0,
+                Ressenti_RPE: parseInt(document.getElementById('form-rpe').value) || 5,
+                ressenti_rpe: parseInt(document.getElementById('form-rpe').value) || 5,
+                Type_Realise: document.getElementById('form-type').value || "Endurance",
+                type_realise: document.getElementById('form-type').value || "Endurance",
+                date_course: dateSaisie
+            };
+
+            appData.pratique.push(nouvelleSeance);
+            localStorage.setItem('trail_data_cache', JSON.stringify(appData));
+            
+            renderProgression();
+            renderConseils();
+
             try {
-                const rows = data.feed.entry;
-                const tempPlan = {};
-
-                rows.forEach(row => {
-                    const sem = parseInt(row.gsx$semaine.$t);
-                    if (isNaN(sem)) return;
-
-                    if (!tempPlan[sem]) {
-                        tempPlan[sem] = {
-                            "week_number": sem,
-                            "dates": row.gsx$dates.$t,
-                            "phase": row.gsx$phase.$t,
-                            "focus": row.gsx$focus.$t,
-                            "sessions": [],
-                            "strength_sessions": parseInt(row.gsx$séancesrenfo.$t) || 0
-                        };
-                    }
-
-                    const type = row.gsx$type.$t;
-                    const day = row.gsx$jour.$t;
-                    const duration = parseInt(row.gsx$duréemin.$t);
-                    const dplus = parseInt(row.gsx$dplusm.$t) || 0;
-                    const desc = row.gsx$description.$t;
-
-                    if (type && day) {
-                        tempPlan[sem].sessions.push({
-                            "day": day,
-                            "type": type,
-                            "duration_min": duration,
-                            "description": desc,
-                            "d_plus_m": dplus
-                        });
-                    }
+                await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(nouvelleSeance)
                 });
-
-                return Object.values(tempPlan).sort((a, b) => a.week_number - b.week_number);
-            } catch (e) {
-                console.error("Échec du parsing Google Sheets JSON :", e);
-                return null;
+                showToast("Séance enregistrée localement et envoyée au serveur !");
+            } catch (err) {
+                let queue = JSON.parse(localStorage.getItem('offline_queue') || '[]');
+                queue.push(nouvelleSeance);
+                localStorage.setItem('offline_queue', JSON.stringify(queue));
+                showToast("Erreur réseau. Enregistré en cache (mode hors-ligne).");
             }
+
+            document.getElementById('form-dist').value = "";
+            document.getElementById('form-dplus').value = "";
+            document.getElementById('form-duree').value = "";
+            document.querySelectorAll('.tag-btn').forEach(b => {
+                b.className = "tag-btn px-3 py-2 rounded-lg border border-stone-200 bg-white text-sm text-stone-700 font-semibold transition-all";
+            });
+            document.getElementById('form-type').value = "";
+            
+            btnSubmit.disabled = false;
+            btnSubmit.innerText = "Valider la séance";
+            switchTab('progression');
+        }
+
+        // Geste Pull to refresh
+        let touchStartY = 0;
+        window.addEventListener('touchstart', function(e) {
+            if (window.scrollY === 0) {
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', function(e) {
+            if (touchStartY > 0) {
+                const currentY = e.touches[0].clientY;
+                const diff = currentY - touchStartY;
+                if (diff > 130) { 
+                    touchStartY = 0; 
+                    pullToRefresh();
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', function() {
+            touchStartY = 0;
+        }, { passive: true });
+
+        fetchInitialData();
+    </script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
         }
     </script>
 </body>
