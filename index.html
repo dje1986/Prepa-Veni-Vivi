@@ -7,9 +7,7 @@
     <link class="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <!-- Tailwind CSS v4 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Chart.js CDN pour les graphiques temporels -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -74,22 +72,28 @@
         let instanceChartDist = null;
         let instanceChartDplus = null;
 
+        // Tri initial du plan par ordre chronologique strict
+        function trierPlanTheorique() {
+            appData.theorique.sort((a, b) => getExactDate(a.Dates, a.Jour) - getExactDate(b.Dates, b.Jour));
+        }
+
         async function fetchInitialData() {
             try {
                 const res = await fetch(API_URL);
                 const json = await res.json();
                 if(json.theorique && json.theorique.length > 0) appData.theorique = json.theorique;
                 appData.pratique = json.pratique || [];
+                trierPlanTheorique();
                 localStorage.setItem('trail_data_cache', JSON.stringify(appData));
             } catch (e) {
                 const cache = localStorage.getItem('trail_data_cache');
                 if (cache) appData = JSON.parse(cache);
+                trierPlanTheorique();
             }
             renderProgression();
             renderConseils();
         }
 
-        // Fonctions utilitaires pour le calcul des dates exactes
         function getExactDate(datesStr, jourStr) {
             if (!datesStr) return new Date();
             const parts = datesStr.split(" au ");
@@ -113,8 +117,18 @@
             if (!dateObj) return "";
             const options = { weekday: 'long', day: 'numeric', month: 'long' };
             let str = dateObj.toLocaleDateString('fr-FR', options);
-            // Capitalisation propre de chaque élément textuel (ex: Mardi 21 Juillet)
             return str.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        // Formate une plage "AAAA-MM-JJ au AAAA-MM-JJ" en "du JJ Mois au JJ Mois"
+        function formatFrenchRange(datesStr) {
+            if (!datesStr) return "";
+            const parts = datesStr.split(" au ");
+            if (parts.length < 2) return datesStr;
+            const cap = s => s.split(' ').map(w => isNaN(w) ? w.charAt(0).toUpperCase() + w.slice(1) : w).join(' ');
+            const str1 = cap(new Date(parts[0]).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }));
+            const str2 = cap(new Date(parts[1]).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' }));
+            return `du ${str1} au ${str2}`;
         }
     </script>
 
@@ -128,14 +142,12 @@
 
     <div id="toast" class="hidden fixed top-16 left-4 right-4 bg-stone-800 text-white text-sm p-3 rounded-xl shadow-lg text-center z-50"></div>
 
-    <!-- PAGE 1 : PROGRESSION -->
     <main id="page-progression" class="p-4 space-y-6 flex-1 max-w-xl mx-auto w-full">
         <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-xs">
             <span class="text-xs font-bold uppercase tracking-wider text-stone-400" id="current-phase-title">Reprise & Volume Initial</span>
-            <h2 class="text-xl font-black mt-0.5" id="current-week-title" style="color: var(--txt-marron-fonce)">Semaine 1</h2>
+            <h2 class="text-sm font-black mt-0.5 text-stone-700" id="current-week-title">Semaine 1</h2>
         </div>
 
-        <!-- CETTE SEMAINE -->
         <div class="space-y-4">
             <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Objectifs de la semaine</h3>
             <div>
@@ -152,7 +164,6 @@
             </div>
         </div>
 
-        <!-- PROGRESSION GLOBALE -->
         <div class="bg-stone-100/70 p-5 rounded-2xl border border-stone-200/40 space-y-4">
             <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Progression globale (Objectif Course)</h3>
             <div>
@@ -165,15 +176,11 @@
             </div>
         </div>
 
-        <!-- LES 3 PROCHAINES SÉANCES DU PLAN -->
         <div class="space-y-2">
             <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Les 3 prochaines séances du plan</h3>
-            <div id="next-sessions-container" class="space-y-2">
-                <!-- Injecté dynamiquement par JS -->
-            </div>
+            <div id="next-sessions-container" class="space-y-2"></div>
         </div>
 
-        <!-- GRAPHIQUES TEMPORELS -->
         <div class="space-y-4">
             <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Courbes d'évolution temporelle (Avant Course)</h3>
             <div class="bg-white p-4 rounded-2xl border border-stone-100 shadow-xs">
@@ -186,16 +193,12 @@
             </div>
         </div>
 
-        <!-- INDICATEURS DE SÉANCES ADAPTÉS -->
         <div class="space-y-3">
             <h3 class="text-xs font-black uppercase tracking-wider text-stone-400">Séances réalisées par catégorie</h3>
-            <div id="type-indicators" class="grid grid-cols-2 gap-2 text-white text-center text-xs font-bold">
-                <!-- Injecté dynamiquement par JS -->
-            </div>
+            <div id="type-indicators" class="grid grid-cols-2 gap-2 text-white text-center text-xs font-bold"></div>
         </div>
     </main>
 
-    <!-- PAGE 2 : AJOUTER DES DONNÉES -->
     <main id="page-ajouter" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
         <h2 class="text-xl font-bold">Enregistrer un entraînement</h2>
         <form id="form-seance" onsubmit="soumettreSeance(event)" class="space-y-4">
@@ -236,24 +239,19 @@
         </form>
     </main>
 
-    <!-- PAGE 4 : PROGRAMME COMPLET (NOUVELLE PAGE) -->
     <main id="page-programme" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
         <div class="flex justify-between items-center">
             <h2 class="text-xl font-bold">Programme de Préparation</h2>
             <span id="prog-total-count" class="text-xs font-bold px-2.5 py-1 rounded-full text-stone-600 bg-stone-200/60">0 séances</span>
         </div>
-        <div id="programme-list-container" class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1">
-            <!-- Injecté dynamiquement par JS -->
-        </div>
+        <div id="programme-list-container" class="space-y-3 max-h-[calc(100vh-12rem)] overflow-y-auto pr-1"></div>
     </main>
 
-    <!-- PAGE 3 : CONSEIL -->
     <main id="page-conseil" class="p-4 space-y-6 flex-1 hidden max-w-xl mx-auto w-full">
         <h2 class="text-xl font-bold">L'Analyse du Coach</h2>
         <div id="conseil-container" class="space-y-4"></div>
     </main>
 
-    <!-- NAVIGATION RESTRUCTURÉE -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-stone-200 h-16 flex justify-center items-center gap-2 z-10">
         <button onclick="switchTab('progression')" class="w-20 flex flex-col items-center text-center text-[10px] font-bold space-y-0.5 text-emerald-800 transition-transform active:scale-95">
             <span class="text-lg">⚡</span>
@@ -275,6 +273,7 @@
 
     <script>
         document.getElementById('form-date').value = new Date().toISOString().split('T')[0];
+        trierPlanTheorique(); // Tri de sécurité immédiat au démarrage
 
         const DESIGN_COULEURS = {
             'Endurance': { bg: 'bg-blue-600', border: 'border-blue-600', hex: '#2563eb' },
@@ -348,13 +347,13 @@
             const sNum = getNumSemaineActuelle();
             const labelSemaine = "Semaine " + sNum;
             
-            // 1. OBJECTIFS DE LA SEMAINE EN COURS
             const sTheorique = appData.theorique.filter(s => s.Semaine === labelSemaine);
             let cibleDuree = 0, cibleDplus = 0, cibleSeances = sTheorique.length;
             
             if(sTheorique.length > 0) {
                 document.getElementById('current-phase-title').innerText = sTheorique[0].Phase;
-                document.getElementById('current-week-title').innerText = labelSemaine + " : " + sTheorique[0].Dates;
+                // Affichage personnalisé de la plage de dates à la française
+                document.getElementById('current-week-title').innerText = labelSemaine + " : " + formatFrenchRange(sTheorique[0].Dates);
                 sTheorique.forEach(s => {
                     cibleDuree += parseFloat(s.Duree_Prevue_Min) || 0;
                     cibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
@@ -383,7 +382,6 @@
             document.getElementById('bar-dplus').style.width = Math.min((realDplus / (cibleDplus || 1)) * 100, 100) + "%";
             document.getElementById('bar-seances').style.width = Math.min((realSeances / (cibleSeances || 1)) * 100, 100) + "%";
 
-            // 2. CALCULS DES COURBES ET RECHERCHE DES SÉANCES FUTURES
             let arrLabels = [];
             let arrTheoDistCumul = [];
             let arrTheoDplusCumul = [];
@@ -460,11 +458,10 @@
             document.getElementById('bar-global-dist').style.width = Math.min((globalRealDist / (totalPlanCibleDist || 1)) * 100, 100) + "%";
             document.getElementById('bar-global-dplus').style.width = Math.min((globalRealDplus / (totalPlanCibleDplus || 1)) * 100, 100) + "%";
 
-            // Rendu des blocs annexes
             renderThreeNextSessions(sNum, realSeances);
             renderEvolutionCharts(arrLabels, arrTheoDistCumul, arrRealDistCumul, arrTheoDplusCumul, arrRealDplusCumul);
             renderVolumeCategories();
-            renderProgramme(); // Met à jour le catalogue complet
+            renderProgramme(); 
         }
 
         function renderThreeNextSessions(currentWeekNum, completedThisWeekCount) {
@@ -500,13 +497,12 @@
             container.innerHTML = html;
         }
 
-        // FONCTION DE RENDU POUR LA NOUVELLE PAGE "PROGRAMME"
         function renderProgramme() {
             const container = document.getElementById('programme-list-container');
             if (!container) return;
 
             const today = new Date();
-            today.setHours(0, 0, 0, 0); // Repère de comparaison à minuit
+            today.setHours(0, 0, 0, 0);
 
             let html = "";
             appData.theorique.forEach(seance => {
@@ -517,7 +513,6 @@
                 compDate.setHours(0, 0, 0, 0);
                 const isPast = compDate < today;
 
-                // Application des styles selon le statut passé/futur
                 const cardClass = isPast 
                     ? "bg-stone-100/70 border-stone-200/60 opacity-60 text-stone-500" 
                     : "bg-white border-stone-100 shadow-2xs text-stone-800";
@@ -702,8 +697,31 @@
             switchTab('progression');
         }
 
-        renderProgression();
-        renderConseils();
+        // --- ENREGISTREMENT GESTE PULL TO REFRESH ---
+        let touchStartY = 0;
+        window.addEventListener('touchstart', function(e) {
+            if (window.scrollY === 0) {
+                touchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', function(e) {
+            if (touchStartY > 0) {
+                const currentY = e.touches[0].clientY;
+                const diff = currentY - touchStartY;
+                // Si l'utilisateur glisse vers le bas de plus de 130px depuis le haut
+                if (diff > 130) { 
+                    touchStartY = 0; // Bloque les déclenchements en boucle
+                    pullToRefresh();
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', function() {
+            touchStartY = 0;
+        }, { passive: true });
+
+        // Initialisation globale
         fetchInitialData();
     </script>
     <script>
