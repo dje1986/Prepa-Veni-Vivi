@@ -1,4 +1,4 @@
-const CACHE_NAME = 'veni-vici-v8';
+const CACHE_NAME = 'veni-vici-v9';
 const ASSETS = [
   'index.html',
   'manifest.json',
