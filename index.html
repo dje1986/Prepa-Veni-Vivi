@@ -27,45 +27,49 @@
         const API_URL = "https://script.google.com/macros/s/AKfycbyoy24ZHaxXDhNADuZtRsZvxUcwMIwyVWOdcw8ve5i3rIcGRLDHNWQ6-XGSnb0FBocr/exec"; 
         
         const PLAN_INITIAL = [
-            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Mardi","Type":"Côtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 8x30\" en côte (descente RCV) + 15' EF"},
-            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Courir au feeling en aisance respiratoire pure (seuil 1)"},
-            {"Semaine":"Semaine 1","Dates":"2026-07-18 au 2026-07-26","Phase":"Reprise & Volume Initial","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":100,"D_Plus_Prevu_M":400,"Description":"Rando-course en terrain varié, focus sur la régularité"},
-            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Mardi","Type":"Fartlek Plat","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(1' rapide / 1' lent) + 10' EF"},
-            {"Semaine":"Semaine 2","Dates":"2026-07-27 au 2026-08-02","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Course lente sous la chaleur (adaptation thermique)"},
-            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Mercredi","Type":"Seuil Plat","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x6' allure marathon (5'30/km) Récup 2' + 10' EF"},
-            {"Semaine":"Semaine 3","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Samedi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Sortie continue en aisance totale"},
-            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Mardi","Type":"Fartlek Court","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"15' EF + 12x(30\" vite / 30\" lent) + 10' EF"},
-            {"Semaine":"Semaine 4","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 3","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing de récupération active"},
-            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Mardi","Type":"Côtes courtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"15' EF + 10x40\" en côte dynamique + 15' EF"},
-            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing plat de récupération"},
-            {"Semaine":"Semaine 5","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+ Catégorie","Jour":"Samedi","Type":"Sortie Longue Trail","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Rando-course avec montées marchées actives et descentes souples"},
-            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Mardi","Type":"Seuil en Côte","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 4x4' montée rythmée (allure trail court) Récup descente + 10' EF"},
-            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Footing sur plat avec 3 accélérations de 15\" en fin de séance"},
-            {"Semaine":"Semaine 6","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":140,"D_Plus_Prevu_M":600,"Description":"Bloc spécifique : inclure 2x15' à allure cible VV (Veni Vici)"},
-            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Mardi","Type":"Côtes Longues","Duree_Prevue_Min":60,"D_Plus_Prevu_M":350,"Description":"15' EF + 3x8' montée au train (Seuil anaérobie) Récup descente"},
-            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing de relâchement complet"},
-            {"Semaine":"Semaine 7","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Samedi","Type":"Sortie Longue Majeure","Duree_Prevue_Min":160,"D_Plus_Prevu_M":700,"Description":"Parcours vallonné, travail des transitions marche/course"},
-            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Vendredi","Type":"Footing Reprise","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"Trot très souple sur le plat, écoute des sensations"},
-            {"Semaine":"Semaine 9","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Dimanche","Type":"Footing Continu","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Endurance fondamentale pure, terrain souple (parc ou sous-bois)"},
-            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Mardi","Type":"Côtes Douces","Duree_Prevue_Min":45,"D_Plus_Prevu_M":120,"Description":"15' EF + 6x30\" en côte sans forcer + 15' EF"},
-            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing avec variations de rythme naturelles sur le plat"},
-            {"Semaine":"Semaine 10","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Samedi","Type":"Sortie Longue Progressive","Duree_Prevue_Min":90,"D_Plus_Prevu_M":350,"Description":"Sortie trail douce, focus technique en descente"},
-            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Mardi","Type":"Seuil Spécifique","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x2000m sur plat ou faux-plat à allure marathon (5'30) R=2'"},
-            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Vendredi","Type":"Côtes Répétées","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 8x1' en bosse à 85% FCM, récup descente + 15' EF"},
-            {"Semaine":"Semaine 11","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Dimanche","Type":"Sortie Longue Volume","Duree_Prevue_Min":180,"D_Plus_Prevu_M":800,"Description":"Rando-course de 3h. Test obligatoire du matériel et de la nutrition"},
-            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Mardi","Type":"Rappels de VMA","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(30\" à 100% VMA / 30\" EF) + 15' EF"},
-            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Vendredi","Type":"Pré-charge Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"Footing vallonné avec 3x3' de descente technique rythmée"},
-            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Samedi","Type":"Week-end Choc - J1","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Sortie trail active à allure cible"},
-            {"Semaine":"Semaine 12","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Dimanche","Type":"Week-end Choc - J2","Duree_Prevue_Min":180,"D_Plus_Prevu_M":700,"Description":"Rando-course lente sur jambes fatiguées. Focus mental."},
-            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Mercredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing ultra-souple de récupération"},
-            {"Semaine":"Semaine 13","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation & Récupération","Jour":"Samedi","Type":"Sortie Longue Allégée","Duree_Prevue_Min":90,"D_Plus_Prevu_M":300,"Description":"Sortie plaisir en sous-bois sans forcer dans les bosses"},
-            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Mardi","Type":"Seuil Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 2x10' à allure VV (Target 6h15) en terrain vallonné R=3'"},
-            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing d'entretien sur le plat"},
-            {"Semaine":"Semaine 14","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Dimanche","Type":"Sortie Longue Courte","Duree_Prevue_Min":75,"D_Plus_Prevu_M":250,"Description":"Dernière sortie de plus d'une heure. Sensation de fraîcheur recherchée."},
-            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Mardi","Type":"Rappels dynamiques","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 6x200m plat dynamiques sans forcer + 15' EF"},
-            {"Semaine":"Semaine 15","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Vendredi","Type":"Footing Éveil","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"Footing très tranquille avec quelques lignes droites souples"},
-            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Mercredi","Type":"Activation","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"20' EF + 3 accélérations progressives de 100m + 5' EF"},
-            {"Semaine":"Semaine 16","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course - Objectif Veni Vici","Jour":"Samedi","Type":"JOUR DE LA COURSE","Duree_Prevue_Min":375,"D_Plus_Prevu_M":1470,"Description":"LA VENI VICI (52km - 1470m D+). Gestion, plaisir et mental !"}
+            {"Semaine":"Semaine 1","Dates":"2026-07-14 au 2026-07-19","Phase":"Mise en route anticipée","Jour":"Mardi","Type":"Footing","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Endurance Fondamentale pure sur terrain plat."},
+            {"Semaine":"Semaine 1","Dates":"2026-07-14 au 2026-07-19","Phase":"Mise en route anticipée","Jour":"Vendredi","Type":"Côtes courtes","Duree_Prevue_Min":45,"D_Plus_Prevu_M":100,"Description":"15' EF + 6x30\" en côte (descente RCV) + 15' EF"},
+            {"Semaine":"Semaine 1","Dates":"2026-07-14 au 2026-07-19","Phase":"Mise en route anticipée","Jour":"Dimanche","Type":"Sortie Trail Courte","Duree_Prevue_Min":75,"D_Plus_Prevu_M":200,"Description":"Sortie souple avec peu de dénivelé"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-20 au 2026-07-26","Phase":"Volume Initial","Jour":"Mardi","Type":"Côtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 8x30\" en côte (descente RCV) + 15' EF"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-20 au 2026-07-26","Phase":"Volume Initial","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Courir au feeling en aisance respiratoire pure"},
+            {"Semaine":"Semaine 2","Dates":"2026-07-20 au 2026-07-26","Phase":"Volume Initial","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":100,"D_Plus_Prevu_M":400,"Description":"Rando-course en terrain varié, focus sur la régularité"},
+            {"Semaine":"Semaine 3","Dates":"2026-07-27 au 2026-08-02","Phase":"Transition Thaïlande","Jour":"Mardi","Type":"Fartlek Plat","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(1' rapide / 1' lent) + 10' EF"},
+            {"Semaine":"Semaine 3","Dates":"2026-07-27 au 2026-08-02","Phase":"Transition Thaïlande","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Course lente sous la chaleur (adaptation)"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Mercredi","Type":"Seuil Plat","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x6' allure marathon (5'30/km) Récup 2' + 10' EF"},
+            {"Semaine":"Semaine 4","Dates":"2026-08-03 au 2026-08-09","Phase":"Vacances Thaïlande - Maintien 1","Jour":"Samedi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Sortie continue en aisance totale"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Mardi","Type":"Fartlek Court","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"15' EF + 12x(30\" vite / 30\" lent) + 10' EF"},
+            {"Semaine":"Semaine 5","Dates":"2026-08-10 au 2026-08-16","Phase":"Vacances Thaïlande - Maintien 2","Jour":"Vendredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing de récupération active"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+","Jour":"Mardi","Type":"Côtes courtes","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"15' EF + 10x40\" en côte dynamique + 15' EF"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing plat de récupération"},
+            {"Semaine":"Semaine 6","Dates":"2026-08-17 au 2026-08-23","Phase":"Retour & Réintroduction D+","Jour":"Samedi","Type":"Sortie Longue Trail","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Rando-course avec montées marchées"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Mardi","Type":"Seuil en Côte","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 4x4' montée rythmée Récup descente + 10' EF"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"Footing plat avec 3 accélérations"},
+            {"Semaine":"Semaine 7","Dates":"2026-08-24 au 2026-08-30","Phase":"Développement Spécifique 1","Jour":"Dimanche","Type":"Sortie Longue Trail","Duree_Prevue_Min":140,"D_Plus_Prevu_M":600,"Description":"Bloc spécifique : 2x15' allure VV"},
+            {"Semaine":"Semaine 8","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Mardi","Type":"Côtes Longues","Duree_Prevue_Min":60,"D_Plus_Prevu_M":350,"Description":"15' EF + 3x8' montée au train, récup descente"},
+            {"Semaine":"Semaine 8","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing de relâchement complet"},
+            {"Semaine":"Semaine 8","Dates":"2026-08-31 au 2026-09-06","Phase":"Charge Pré-Opératoire","Jour":"Samedi","Type":"Sortie Longue Majeure","Duree_Prevue_Min":160,"D_Plus_Prevu_M":700,"Description":"Parcours vallonné, transitions marche/course"},
+            {"Semaine":"Semaine 9","Dates":"2026-09-07 au 2026-09-13","Phase":"Arrêt Chirurgical - Repos Total","Jour":"Lundi","Type":"Repos","Duree_Prevue_Min":0,"D_Plus_Prevu_M":0,"Description":"Opération le 07/09. Repos strict absolu."},
+            {"Semaine":"Semaine 10","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Vendredi","Type":"Footing Reprise","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"Trot très souple sur le plat, écoute des sensations"},
+            {"Semaine":"Semaine 10","Dates":"2026-09-14 au 2026-09-20","Phase":"Reprise Post-Opératoire Douce","Jour":"Dimanche","Type":"Footing Continu","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Endurance fondamentale pure, terrain souple"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Mardi","Type":"Côtes Douces","Duree_Prevue_Min":45,"D_Plus_Prevu_M":120,"Description":"15' EF + 6x30\" en côte sans forcer + 15' EF"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing sur le plat"},
+            {"Semaine":"Semaine 11","Dates":"2026-09-21 au 2026-09-27","Phase":"Reconstruction & Rythme","Jour":"Samedi","Type":"Sortie Longue Progressive","Duree_Prevue_Min":90,"D_Plus_Prevu_M":350,"Description":"Sortie trail douce"},
+            {"Semaine":"Semaine 12","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Mardi","Type":"Seuil Spécifique","Duree_Prevue_Min":55,"D_Plus_Prevu_M":0,"Description":"15' EF + 3x2000m plat allure marathon"},
+            {"Semaine":"Semaine 12","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Vendredi","Type":"Côtes Répétées","Duree_Prevue_Min":55,"D_Plus_Prevu_M":250,"Description":"15' EF + 8x1' bosse à 85% FCM"},
+            {"Semaine":"Semaine 12","Dates":"2026-09-28 au 2026-10-04","Phase":"Bloc Spécifique Trail - Pic 1","Jour":"Dimanche","Type":"Sortie Longue Volume","Duree_Prevue_Min":180,"D_Plus_Prevu_M":800,"Description":"Rando-course de 3h, test matériel/nutrition"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Mardi","Type":"Rappels VMA","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"15' EF + 10x(30\"/30\") + 15' EF"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Vendredi","Type":"Pré-charge","Duree_Prevue_Min":50,"D_Plus_Prevu_M":200,"Description":"Footing vallonné"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Samedi","Type":"Week-end Choc J1","Duree_Prevue_Min":120,"D_Plus_Prevu_M":500,"Description":"Sortie trail active"},
+            {"Semaine":"Semaine 13","Dates":"2026-10-05 au 2026-10-11","Phase":"Bloc Spécifique - Week-end Choc","Jour":"Dimanche","Type":"Week-end Choc J2","Duree_Prevue_Min":180,"D_Plus_Prevu_M":700,"Description":"Rando-course sur jambes lourdes"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation","Jour":"Mercredi","Type":"Endurance Fondamentale","Duree_Prevue_Min":50,"D_Plus_Prevu_M":0,"Description":"Footing de récupération"},
+            {"Semaine":"Semaine 14","Dates":"2026-10-12 au 2026-10-18","Phase":"Assimilation","Jour":"Samedi","Type":"Sortie Longue Allégée","Duree_Prevue_Min":90,"D_Plus_Prevu_M":300,"Description":"Sortie plaisir sans forcer"},
+            {"Semaine":"Semaine 15","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Mardi","Type":"Seuil Trail","Duree_Prevue_Min":50,"D_Plus_Prevu_M":150,"Description":"15' EF + 2x10' allure VV R=3'"},
+            {"Semaine":"Semaine 15","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Jeudi","Type":"Endurance Fondamentale","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"Footing plat"},
+            {"Semaine":"Semaine 15","Dates":"2026-10-19 au 2026-10-25","Phase":"Affûtage - Étape 1","Jour":"Dimanche","Type":"Sortie Longue Courte","Duree_Prevue_Min":75,"D_Plus_Prevu_M":250,"Description":"Dernière sortie >1h"},
+            {"Semaine":"Semaine 16","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Mardi","Type":"Rappels dynamiques","Duree_Prevue_Min":45,"D_Plus_Prevu_M":0,"Description":"15' EF + 6x200m plat"},
+            {"Semaine":"Semaine 16","Dates":"2026-10-26 au 2026-11-01","Phase":"Affûtage - Étape 2","Jour":"Vendredi","Type":"Footing Éveil","Duree_Prevue_Min":40,"D_Plus_Prevu_M":0,"Description":"Footing tranquille, lignes droites"},
+            {"Semaine":"Semaine 17","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course","Jour":"Mercredi","Type":"Activation","Duree_Prevue_Min":30,"D_Plus_Prevu_M":0,"Description":"20' EF + 3 accélérations 100m"},
+            {"Semaine":"Semaine 17","Dates":"2026-11-02 au 2026-11-08","Phase":"Semaine de Course","Jour":"Samedi","Type":"COURSE","Duree_Prevue_Min":375,"D_Plus_Prevu_M":1470,"Description":"LA VENI VICI (52km - 1470m D+)"}
         ];
 
         let appData = { theorique: PLAN_INITIAL, pratique: [] };
@@ -100,7 +104,7 @@
             const start = new Date(parts[0]);
             const end = new Date(parts[1]);
             const daysMap = { "lundi": 1, "mardi": 2, "mercredi": 3, "jeudi": 4, "vendredi": 5, "samedi": 6, "dimanche": 0 };
-            const targetDay = daysMap[jourStr.trim().toLowerCase()];
+            const targetDay = daysMap[jourStr.trim().toLowerCase()] || 1; // Fallback au lundi
             
             let current = new Date(start);
             while (current <= end) {
@@ -110,6 +114,15 @@
                 current.setDate(current.getDate() + 1);
             }
             return start;
+        }
+        
+        function getMaxWeekNumber() {
+            let max = 1;
+            appData.theorique.forEach(s => {
+                const w = parseInt(s.Semaine.replace("Semaine ", ""));
+                if (!isNaN(w) && w > max) max = w;
+            });
+            return max;
         }
 
         function formatFullDate(dateObj) {
@@ -142,7 +155,7 @@
 
     <main id="page-progression" class="p-4 space-y-6 flex-1 max-w-xl mx-auto w-full">
         <div class="bg-white p-5 rounded-2xl border border-stone-100 shadow-xs">
-            <span class="text-xs font-bold uppercase tracking-wider text-stone-400" id="current-phase-title">Reprise & Volume Initial</span>
+            <span class="text-xs font-bold uppercase tracking-wider text-stone-400" id="current-phase-title">Mise en route anticipée</span>
             <h2 class="text-sm font-black mt-0.5 text-stone-700" id="current-week-title">Semaine 1</h2>
         </div>
 
@@ -283,7 +296,7 @@
 
         function mapPlanTypeToFormCategory(t) {
             if (!t) return 'Endurance';
-            if (t.includes('Endurance') || t.includes('Footing') || t.includes('Activation')) return 'Endurance';
+            if (t.includes('Endurance') || t.includes('Footing') || t.includes('Activation') || t.includes('Repos')) return 'Endurance';
             if (t.includes('VMA') || t.includes('Fartlek') || t.includes('Rappels')) return 'VMA / Fartlek';
             if (t.includes('Côtes') || t.includes('Seuil')) return 'Côtes / Seuil';
             if (t.includes('Sortie Longue') || t.includes('Week-end Choc') || t.includes('COURSE')) return 'Sortie Longue';
@@ -328,13 +341,20 @@
         }
 
         function getNumSemaineDepuisDate(dateStr) {
+            if (!appData.theorique || appData.theorique.length === 0) return 1;
             const d = new Date(dateStr);
-            const dateDebutPlan = new Date("2026-07-18");
+            
+            // Calcul dynamique de la date de départ basée sur la première ligne du JSON
+            const firstDateStr = appData.theorique[0].Dates.split(" au ")[0];
+            const dateDebutPlan = new Date(firstDateStr);
+            
             const diff = d - dateDebutPlan;
             const jours = Math.floor(diff / (1000 * 60 * 60 * 24));
             if (jours < 0) return 1;
+            
+            const maxWeek = getMaxWeekNumber();
             const sem = Math.floor(jours / 7) + 1;
-            return sem <= 16 ? sem : 16;
+            return sem <= maxWeek ? sem : maxWeek;
         }
 
         function getNumSemaineActuelle() {
@@ -344,9 +364,11 @@
         function renderProgression() {
             const sNum = getNumSemaineActuelle();
             const labelSemaine = "Semaine " + sNum;
+            const maxTotalWeek = getMaxWeekNumber();
             
             const sTheorique = appData.theorique.filter(s => s.Semaine === labelSemaine);
             let cibleDuree = 0, cibleDplus = 0, cibleSeances = sTheorique.length;
+            let cibleDist = 0;
             
             if(sTheorique.length > 0) {
                 document.getElementById('current-phase-title').innerText = sTheorique[0].Phase;
@@ -354,6 +376,14 @@
                 sTheorique.forEach(s => {
                     cibleDuree += parseFloat(s.Duree_Prevue_Min) || 0;
                     cibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
+                    
+                    // Calcul dynamique distance de la semaine cible (Course vs Entraînement)
+                    if (s.Type.toUpperCase().includes("COURSE")) {
+                        const matchDist = s.Description.match(/(\d+)\s*km/i);
+                        cibleDist += matchDist ? parseInt(matchDist[1]) : 52;
+                    } else {
+                        cibleDist += ((parseFloat(s.Duree_Prevue_Min) || 0) / 60) * 10;
+                    }
                 });
             }
 
@@ -367,9 +397,6 @@
                 realDist += parseFloat(s.Distance_Km) || parseFloat(s.distance_km) || 0;
                 realDplus += parseInt(s.D_Plus_M) || parseInt(s.d_plus_m) || 0;
             });
-
-            let cibleDist = (cibleDuree / 60) * 10; 
-            if (sNum === 16) cibleDist = 52;
 
             document.getElementById('txt-dist').innerText = `${realDist.toFixed(1)} / ${cibleDist.toFixed(0)} km`;
             document.getElementById('txt-dplus').innerText = `${realDplus} / ${cibleDplus} m`;
@@ -399,7 +426,8 @@
                 }
             });
 
-            for (let w = 1; w <= 15; w++) {
+            // Graphes "Avant Course" -> exclut dynamiquement la dernière semaine de course si elle fausse l'échelle
+            for (let w = 1; w <= maxTotalWeek - 1; w++) {
                 arrLabels.push("S" + w);
                 const loopSemaineLabel = "Semaine " + w;
                 
@@ -436,13 +464,21 @@
                 }
             }
 
+            // Calcul dynamique des cibles absolues de l'intégralité du plan
             let totalPlanCibleDist = 0, totalPlanCibleDplus = 0;
+            let distCourseFinale = 52; // Fallback par défaut
+            
             appData.theorique.forEach(s => {
-                let d = parseFloat(s.Duree_Prevue_Min) || 0;
-                totalPlanCibleDist += (s.Semaine === "Semaine 16") ? 0 : (d / 60) * 10; 
+                if (s.Type.toUpperCase().includes("COURSE")) {
+                    const match = s.Description.match(/(\d+)\s*km/i);
+                    if (match) distCourseFinale = parseInt(match[1]);
+                } else {
+                    let d = parseFloat(s.Duree_Prevue_Min) || 0;
+                    totalPlanCibleDist += (d / 60) * 10; 
+                }
                 totalPlanCibleDplus += parseInt(s.D_Plus_Prevu_M) || 0;
             });
-            totalPlanCibleDist += 52; 
+            totalPlanCibleDist += distCourseFinale; 
 
             let globalRealDist = 0, globalRealDplus = 0;
             appData.pratique.forEach(s => {
@@ -628,6 +664,8 @@
 
             if (currentPhase.includes("Thaïlande")) {
                 html += `<div class="p-4 rounded-xl bg-emerald-50 border border-emerald-200"><h4 class="font-bold text-emerald-800 text-sm">🏝️ Mode Thaïlande</h4><p class="text-xs text-emerald-700 mt-1">Focus sur le plat et l'adaptation thermique.</p></div>`;
+            } else if (currentPhase.includes("Opératoire")) {
+                html += `<div class="p-4 rounded-xl bg-blue-50 border border-blue-200"><h4 class="font-bold text-blue-800 text-sm">🏥 Santé & Repos</h4><p class="text-xs text-blue-700 mt-1">Priorité absolue à la cicatrisation. Zéro effort.</p></div>`;
             } else {
                 html += `<div class="p-4 rounded-xl bg-stone-100 border border-stone-200"><h4 class="font-bold text-stone-800 text-sm">🏃‍♂️ Conseil du coach</h4><p class="text-xs text-stone-600 mt-1">Soigne tes transitions marche/course sur tes sorties longues.</p></div>`;
             }
